@@ -45,7 +45,7 @@
 
 var gui = new dat.GUI();
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
+var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 3000);
 camera.position.z = 60;
 
 var renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -249,8 +249,8 @@ var data = {
     rotationy : 0.005
 };
 var folder = gui.addFolder( 'Rotation' );
-folder.add( data, 'rotationx', 0, 1 ).step( 0.005 )
-folder.add( data, 'rotationy', 0, 1 ).step( 0.005 )
+folder.add( data, 'rotationx', 0, 0.5 ).step( 0.001 )
+folder.add( data, 'rotationy', 0, 0.5 ).step( 0.001 )
 
 
 var render = function () {
