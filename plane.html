@@ -129,10 +129,19 @@ var blackHole = function (u, v) {
     return new THREE.Vector3(x, y, z);
 };
 
+var objects = {
+    Funnel : false,
+    Plane : false,
+    Sphere : false
+};
+
+
+
 
 
 var BHmesh = new THREE.Object3D();
 var PNmesh = new THREE.Object3D();
+var SPmesh = new THREE.Object3D();
 
 BHmesh.add( new THREE.LineSegments(
 
@@ -157,6 +166,8 @@ PNmesh.add( new THREE.LineSegments(
     } )
 
 ) );
+
+
 
 
 BHmesh.add( new THREE.Mesh(
@@ -185,8 +196,55 @@ PNmesh.add( new THREE.Mesh(
 
 ) );
 
+SPmesh.add( new THREE.LineSegments(
+
+    new THREE.Geometry(),
+
+    new THREE.LineBasicMaterial( {
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.5
+    } )
+
+) );
 
 
+
+
+SPmesh.add( new THREE.Mesh(
+
+    new THREE.Geometry(),
+
+    new THREE.MeshPhongMaterial( {
+        color: 0x156289,
+        emissive: 0x072534,
+        side: THREE.DoubleSide,
+        shading: THREE.FlatShading
+    } )
+
+) );
+
+
+function removeMesh(){
+
+
+    if (objects.Funnel){
+        scene.add(BHmesh);
+    } else {
+        scene.remove(BHmesh)
+    }
+    if (objects.Plane){
+        scene.add(PNmesh);
+    } else {
+        scene.remove(PNmesh)
+    }
+
+    if (objects.Sphere){
+        scene.add(SPmesh);
+    } else {
+        scene.remove(SPmesh)
+    }
+}
 
 var options =  function() {
 
@@ -197,19 +255,29 @@ var options =  function() {
         height : 50,
         translateX : 0,
         translateY : 0,
-        translateZ : 0
+        translateZ : 0,
+        radius : 10,
+        phiStart : 0,
+        phiLength : 6.3,
+        thetaStart : 6,
+        thetaLength : 6.3
+
 
     };
 
     function generateGeometry() {
         BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
         PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
+        SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength)
         PN.dynamic= true;
         updateGroupGeometry( BHmesh,
             BH
         );
         updateGroupGeometry( PNmesh,
             PN
+        );
+        updateGroupGeometry( SPmesh,
+            SP
         );
         PNmesh.position.x =data.translateX;
         PNmesh.position.y =data.translateY;
@@ -219,15 +287,24 @@ var options =  function() {
     var folder = gui.addFolder( 'Controls' );
 
     var planeFolder = folder.addFolder( 'Plane Controls' );
+    var sphereFolder = folder.addFolder( 'Sphere Controls' );
 
     folder.add( data, 'slices', 1, 100 ).step( 1 ).onChange( generateGeometry );
     folder.add( data, 'stacks', 1, 100 ).step( 1 ).onChange( generateGeometry );
-
+    folder.add( objects, 'Funnel').onChange( removeMesh, generateGeometry);
+    folder.add( objects, 'Plane').onChange( removeMesh );
+    folder.add( objects, 'Sphere').onChange( removeMesh );
     planeFolder.add( data, 'width', 1, 100 ).step( 1 ).onChange( generateGeometry );
     planeFolder.add( data, 'height', 1, 100 ).step( 1 ).onChange( generateGeometry );
     planeFolder.add( data, 'translateX', -100, 100 ).step( 1 ).onChange( generateGeometry );
     planeFolder.add( data, 'translateY', -100, 100 ).step( 1 ).onChange( generateGeometry );
     planeFolder.add( data, 'translateZ', -100, 100 ).step( 1 ).onChange( generateGeometry );
+
+    sphereFolder.add(data,'radius',0,50).step(1).onChange(generateGeometry);
+    sphereFolder.add(data,'phiStart',0,10).step(0.5).onChange(generateGeometry);
+    sphereFolder.add(data,'phiLength',0,10).step(0.5).onChange(generateGeometry);
+    sphereFolder.add(data,'thetaStart',0,10).step(0.5).onChange(generateGeometry);
+    sphereFolder.add(data,'thetaLength',0,10).step(0.5).onChange(generateGeometry);
 
     generateGeometry();
 
@@ -236,8 +313,8 @@ options();
 
 
 
-scene.add(BHmesh);
-scene.add(PNmesh);
+//scene.add(BHmesh);
+//scene.add(PNmesh);
 
 
 
@@ -266,6 +343,9 @@ var render = function () {
 
         PNmesh.rotation.x += data.rotationx;
         PNmesh.rotation.y += data.rotationy;
+
+        SPmesh.rotation.x += data.rotationx;
+        SPmesh.rotation.y += data.rotationy;
 
 
     renderer.render( scene, camera );
