@@ -88,16 +88,20 @@
                 return new THREE.Vector3(x, y, z);
             }
             var blackHole = function (u, v) {
+                u = u * 10 ;
+                v = v * 2 * Math.PI;
                 var a = (1 / 4) * (Math.pow(u, 2) + 4);
                 var rho = Math.sqrt((a - 1) * a) + Math.asinh(Math.sqrt(a - 1));
-                //var x = rho * Math.cos(v);
-                var x = Math.cos(u);
-                //var y = rho * Math.sin(v);
-                var y = Math.sin(v);
-                var z = u * v;
+                var x = rho * Math.cos(v);
+                var y = rho * Math.sin(v);
+                var z = u;
                 return new THREE.Vector3(x, y, z);
             };
-            var mesh = createMesh(new THREE.ParametricGeometry(paramFunction5, 120, 120, false));
+            var geo = new THREE.PlaneBufferGeometry(200, 200, 8, 8);
+            var mat = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
+            var plane = new THREE.Mesh(geo, mat);
+            //scene.add(plane);
+            var mesh = createMesh(new THREE.ParametricGeometry(blackHole, 120, 120, false));
             scene.add(mesh);
             render();
             function createMesh(geom) {
