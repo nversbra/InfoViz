@@ -38,10 +38,13 @@
 <script src="DAT.gui.js"></script>
 <script src="OrbitControls.js"></script>
 <script src="ParametricGeometries.js"></script>
-
+<script src="stats.js"></script>
 <script src="geometry.js"></script>
 
+<div id="ThreeJS"></div>
+
 <script>
+
 
 var gui = new dat.GUI();
 var scene = new THREE.Scene();
@@ -114,7 +117,12 @@ dirLight.shadow.camera.bottom = -d;
 dirLight.shadow.camera.far = 3500;
 dirLight.shadow.bias = -0.0001;
 
-
+var stats= new Stats();
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.bottom = '0px';
+stats.domElement.style.zIndex = 100;
+container = document.getElementById( 'ThreeJS' );
+container.appendChild( stats.domElement );
 
 
 var blackHole = function (u, v) {
@@ -336,7 +344,7 @@ var render = function () {
 
 
 
-
+        stats.update();
 
         BHmesh.rotation.x += data.rotationx;
         BHmesh.rotation.y += data.rotationy;
