@@ -125,6 +125,25 @@ container = document.getElementById( 'ThreeJS' );
 container.appendChild( stats.domElement );
 
 
+var maxDensity = 0.004; 
+
+var data = {
+        slices : 100,
+        stacks : 100,
+        width : 50,
+        height : 50,
+        translateX : 0,
+        translateY : 0,
+        translateZ : 0,
+        phiStart : 0,
+        phiLength : 6.3,
+        thetaStart : 6,
+        thetaLength : 6.3, 
+        radius : 5,
+        density : 0
+};
+
+
 var blackHole = function (u, v) {
 
     rs = 0.5; 
@@ -132,7 +151,6 @@ var blackHole = function (u, v) {
     u = u * 10  ;
     v = v * 2 * Math.PI;
     var r =  1/4 * (4 * Math.pow(rs, 2) + Math.pow(u, 2));
-    console.log(r);
     var rho;
     //if (r > rs)
     rho = Math.sqrt((r - rs) * r) + 1/2 * rs * Math.log( 2 * r  * (Math.sqrt(1 - rs/r) + 1)  - rs);
@@ -149,15 +167,16 @@ var staticStar = function(u, v){
 // u is radial distance to the center in the euclidian space
 // v is the angle 
 
-    var R = 5;  // radius of the star 
+    var R = data.radius;  // radius of the star 
     var rmax =  5 * R; // maximal distance plotted 
     v = v * 2 * Math.PI; // v scaled to angle range 
     var r = u * rmax;
     var R3 = Math.pow(R,3);
-    var density = 0;
-    var M = (4 * Math.PI / 3) * density * R3;
+    var M = (4 * Math.PI / 3) * data.density * R3;
 
-    var y = - 10; // offset from first plane
+    var max_y =  Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(rmax-2*M)) - Math.sqrt(8 * M *(R-2*M));
+
+    var y = -max_y; 
 
     if (r > R){
         y += Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(r-2*M)) - Math.sqrt(8 * M *(R-2*M));
@@ -173,8 +192,8 @@ var staticStar = function(u, v){
 
 var objects = {
     Funnel : false,
-    Plane : true,
-    Sphere : false
+    Plane : false,
+    Sphere : true
 };
 
 
@@ -185,6 +204,7 @@ var BHmesh = new THREE.Object3D();
 var PNmesh = new THREE.Object3D();
 var SPmesh = new THREE.Object3D();
 var SSmesh = new THREE.Object3D();
+
 
 BHmesh.add( new THREE.LineSegments(
 
@@ -211,17 +231,17 @@ PNmesh.add( new THREE.LineSegments(
 ) );
 
 
-SPmesh.add( new THREE.LineSegments(
+/*SPmesh.add( new THREE.LineSegments(
 
     new THREE.Geometry(),
 
     new THREE.LineBasicMaterial( {
         color: 0xffffff,
         transparent: true,
-        opacity: 0.5
+        opacity: data.density * 1000
     } )
 
-) );
+) );*/
 
 SSmesh.add( new THREE.LineSegments(
 
@@ -230,6 +250,7 @@ SSmesh.add( new THREE.LineSegments(
     new THREE.LineBasicMaterial( {
         color: 0xffffff,
         transparent: true,
+        side: THREE.DoubleSide,
         opacity: 0.5
     } )
 
@@ -265,31 +286,34 @@ PNmesh.add( new THREE.Mesh(
 ) );
 
 
-SPmesh.add( new THREE.Mesh(
+/*SPmesh.add( new THREE.Mesh(
 
     new THREE.Geometry(),
 
     new THREE.MeshPhongMaterial( {
-        color: 0x156289,
-        emissive: 0x072534,
-        side: THREE.DoubleSide,
+        color: 0x666666,
+        opacity : data.density * 1000, 
+        //side: THREE.DoubleSide,
         shading: THREE.FlatShading
     } )
 
-) );
+) );*/
 
 SSmesh.add( new THREE.Mesh(
 
-    new THREE.Geometry(),
+    new THREE.Geometry()
 
-    new THREE.MeshPhongMaterial( {
-        color: 0x156289,
-        emissive: 0x072534,
+    /*new THREE.MeshPhongMaterial( {
+        //color: 0x156289,
+        //emissive: 0x072534,
         side: THREE.DoubleSide,
-        shading: THREE.FlatShading
-    } )
+        //shading: THREE.FlatShading
+    } )*/
 
 ) );
+
+
+
 
 
 function removeMesh(){
@@ -300,11 +324,11 @@ function removeMesh(){
     } else {
         scene.remove(BHmesh)
     }
-    if (objects.Plane){
+    /*if (objects.Plane){
         scene.add(PNmesh);
     } else {
         scene.remove(PNmesh)
-    }
+    }*/
 
     if (objects.Sphere){
         scene.add(SPmesh);
@@ -315,59 +339,57 @@ function removeMesh(){
 
 var options =  function() {
 
-    removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
+     
     scene.add(SSmesh);
 
-    var data = {
-        slices : 40,
-        stacks : 40,
-        width : 50,
-        height : 50,
-        translateX : 0,
-        translateY : 0,
-        translateZ : 0,
-        radius : 10,
-        phiStart : 0,
-        phiLength : 6.3,
-        thetaStart : 6,
-        thetaLength : 6.3
-
-
-    };
 
     function generateGeometry() {
+        removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
         BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
-        PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
-        SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength)
+        //PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
+        
+
         SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
-        PN.dynamic= true;
+
+        SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength);
+
+        material = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false, transparent : true, opacity: 0 } );
+        SPmesh = new THREE.Mesh( SP, material );
+        //var color = new THREE.Color( data.density / maxDensity, data.density / maxDensity, data.density / maxDensity );
+        var opacity = data.density / (maxDensity-0.50)  + 0.50;
+        SPmesh.material.opacity =  opacity ;
+
+
+        //PN.dynamic= true;
         updateGroupGeometry( BHmesh,
             BH
         );
-        updateGroupGeometry( PNmesh,
+        /*updateGroupGeometry( PNmesh,
             PN
-        );
-        updateGroupGeometry( SPmesh,
+        );*/
+        /*updateGroupGeometry( SPmesh,
             SP
-        );
-         updateGroupGeometry( SSmesh,
+        );*/
+        updateGroupGeometry( SSmesh,
             SS
         );
-        PNmesh.position.x =data.translateX;
+        /*PNmesh.position.x =data.translateX;
         PNmesh.position.y = data.translateY + 5;
         PNmesh.position.z =data.translateZ;
         PNmesh.rotation.x = Math.PI / 2;
-        PNmesh.rotation.z = Math.PI / 4 - 0.04;
+        PNmesh.rotation.z = Math.PI / 4 - 0.04;*/
+        
 
 
     }
 
     var folder = gui.addFolder( 'Controls' );
 
-    var planeFolder = folder.addFolder( 'Plane Controls' );
-    var sphereFolder = folder.addFolder( 'Sphere Controls' );
+    /*var planeFolder = folder.addFolder( 'Plane Controls' );
+    var sphereFolder = folder.addFolder( 'Sphere Controls' );*/
+    //var starFolder = folder.addFolder('star controls');
 
-    folder.add( data, 'slices', 1, 100 ).step( 1 ).onChange( generateGeometry );
+    /*folder.add( data, 'slices', 1, 100 ).step( 1 ).onChange( generateGeometry );
     folder.add( data, 'stacks', 1, 100 ).step( 1 ).onChange( generateGeometry );
     folder.add( objects, 'Funnel').onChange( removeMesh, generateGeometry);
     folder.add( objects, 'Plane').onChange( removeMesh );
@@ -382,7 +404,10 @@ var options =  function() {
     sphereFolder.add(data,'phiStart',0,10).step(0.5).onChange(generateGeometry);
     sphereFolder.add(data,'phiLength',0,10).step(0.5).onChange(generateGeometry);
     sphereFolder.add(data,'thetaStart',0,10).step(0.5).onChange(generateGeometry);
-    sphereFolder.add(data,'thetaLength',0,10).step(0.5).onChange(generateGeometry);
+    sphereFolder.add(data,'thetaLength',0,10).step(0.5).onChange(generateGeometry);*/
+
+    folder.add(data, 'density', 0, maxDensity).step(0.0001).onChange(generateGeometry);
+
 
     generateGeometry();
 
@@ -399,13 +424,13 @@ options();
 var prevFog = false;
 
 
-var data = {
-    rotationx : 0,
-    rotationy : 0
-};
-var folder = gui.addFolder( 'Rotation' );
-folder.add( data, 'rotationx', 0, 0.5 ).step( 0.001 )
-folder.add( data, 'rotationy', 0, 0.5 ).step( 0.001 )
+// var data = {
+//     rotationx : 0,
+//     rotationy : 0
+// };
+// var folder = gui.addFolder( 'Rotation' );
+// folder.add( data, 'rotationx', 0, 0.5 ).step( 0.001 )
+// folder.add( data, 'rotationy', 0, 0.5 ).step( 0.001 )
 
 
 var render = function () {
@@ -414,14 +439,16 @@ var render = function () {
 
         stats.update();
 
-        BHmesh.rotation.x += data.rotationx;
+        //SPmesh.opacity = data.density * 1000;
+
+/*        BHmesh.rotation.x += data.rotationx;
         BHmesh.rotation.y += data.rotationy;
 
         PNmesh.rotation.x += data.rotationx;
         PNmesh.rotation.y += data.rotationy;
 
         SPmesh.rotation.x += data.rotationx;
-        SPmesh.rotation.y += data.rotationy;
+        SPmesh.rotation.y += data.rotationy;*/
 
 
     renderer.render( scene, camera );
