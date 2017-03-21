@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Example 06.06 - Parametric geometries</title>
+    <script type="text/javascript" src="../libs/threeJS/three.js"></script>
+    <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
+
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="Stats-output">
+    </div>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output">
+    </div>
+
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+        // once everything is loaded, we run our Three.js stuff.
+        function init() {
+
+            // create a scene, that will hold all our elements such as objects, cameras and lights.
+            var scene = new THREE.Scene();
+            // create a camera, which defines where we're looking at.
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
+            // create a render and set the size
+            var webGLRenderer = new THREE.WebGLRenderer();
+            webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+            webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+            webGLRenderer.shadowMapEnabled = true;
+            // position and point the camera to the center of the scene
+            camera.position.x = -30;
+            camera.position.y = 50;
+            camera.position.z = 50;
+            camera.lookAt(new THREE.Vector3(10, -20, 0));
+            // add the output of the renderer to the html element
+            document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
+
+            //controls
+            controls = new THREE.OrbitControls(camera);
+            controls.rotateSpeed = 1.0;
+            controls.zoomSpeed = 1.2;
+            controls.panSpeed = 0.8;
+            // Helpers
+            axes = new THREE.AxisHelper(50);
+            helper = new THREE.GridHelper(1000, 10);
+            helper.setColors(0x0000ff, 0x808080);
+            scene.add(axes);
+            scene.add(helper);
+
+            light = new THREE.HemisphereLight(0xffbf67, 0x15c6ff);
+            scene.add(light);
+
+            var geo = new THREE.SphereGeometry(10, 32, 32);
+            var mat = new THREE.MeshStandardMaterial({ color: 0x000000, side: THREE.DoubleSide });
+            var plane = new THREE.Mesh(geo, mat);
+            scene.add(plane);
+            render();
+
+            function render() {
+                // render using requestAnimationFrame
+                requestAnimationFrame(render);
+                webGLRenderer.render(scene, camera);
+            }
+
+        }
+        window.onload = init;
+    </script>
+</body>
+
+</html>
