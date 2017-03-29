@@ -54,7 +54,7 @@ camera.position.z = 60;
 var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setClearColor( 0x000000, 1 );
+renderer.setClearColor( 0x00000, 1 );
 document.body.appendChild( renderer.domElement );
 
 var orbit = new THREE.OrbitControls( camera, renderer.domElement );
@@ -128,8 +128,8 @@ container.appendChild( stats.domElement );
 var maxDensity = 0.004; 
 
 var data = {
-        slices : 100,
-        stacks : 100,
+        slices : 50,
+        stacks : 50,
         width : 50,
         height : 50,
         translateX : 0,
@@ -140,7 +140,7 @@ var data = {
         thetaStart : 6,
         thetaLength : 6.3, 
         radius : 5,
-        density : 0
+        density : 0.0002
 };
 
 
@@ -167,6 +167,9 @@ var staticStar = function(u, v){
 // u is radial distance to the center in the euclidian space
 // v is the angle 
 
+    //console.log(u);
+
+
     var R = data.radius;  // radius of the star 
     var rmax =  5 * R; // maximal distance plotted 
     v = v * 2 * Math.PI; // v scaled to angle range 
@@ -174,16 +177,22 @@ var staticStar = function(u, v){
     var R3 = Math.pow(R,3);
     var M = (4 * Math.PI / 3) * data.density * R3;
 
-    var max_y =  Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(rmax-2*M)) - Math.sqrt(8 * M *(R-2*M));
+    var max_y = Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(rmax-2*M)) - Math.sqrt(8 * M *(R-2*M));
 
     var y = -max_y; 
 
-    if (r > R){
-        y += Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(r-2*M)) - Math.sqrt(8 * M *(R-2*M));
-    } 
+    if (M == 0)
+        y = 0;
     else {
-        y += Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M * Math.pow(r,2) / R3));
+        if (r > R){
+            y += Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(r-2*M)) - Math.sqrt(8 * M *(R-2*M));
+        } 
+        else {
+            y+= Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M * Math.pow(r,2) / R3));
+        }
     }
+
+  
        
     var x = r * Math.cos(v);
     var z = r * Math.sin(v);
@@ -193,7 +202,8 @@ var staticStar = function(u, v){
 var objects = {
     Funnel : false,
     Plane : false,
-    Sphere : true
+    Sphere : true, 
+    Star : true
 };
 
 
@@ -205,6 +215,7 @@ var PNmesh = new THREE.Object3D();
 var SPmesh = new THREE.Object3D();
 var SSmesh = new THREE.Object3D();
 
+var wireframe;
 
 BHmesh.add( new THREE.LineSegments(
 
@@ -243,18 +254,7 @@ PNmesh.add( new THREE.LineSegments(
 
 ) );*/
 
-SSmesh.add( new THREE.LineSegments(
 
-    new THREE.Geometry(),
-
-    new THREE.LineBasicMaterial( {
-        color: 0xffffff,
-        transparent: true,
-        side: THREE.DoubleSide,
-        opacity: 0.5
-    } )
-
-) );
 
 
 
@@ -299,18 +299,18 @@ PNmesh.add( new THREE.Mesh(
 
 ) );*/
 
-SSmesh.add( new THREE.Mesh(
+/*SSmesh.add( new THREE.Mesh(
 
-    new THREE.Geometry()
+    new THREE.Geometry(),
 
-    /*new THREE.MeshPhongMaterial( {
+    new THREE.MeshPhongMaterial( {
         //color: 0x156289,
         //emissive: 0x072534,
-        side: THREE.DoubleSide,
+        side: THREE.DoubleSide
         //shading: THREE.FlatShading
-    } )*/
+    } )
 
-) );
+) );*/
 
 
 
@@ -329,6 +329,11 @@ function removeMesh(){
     } else {
         scene.remove(PNmesh)
     }*/
+    if (objects.Star){
+        scene.add(wireframe);
+    } else {
+        scene.remove(wireframe)
+    }
 
     if (objects.Sphere){
         scene.add(SPmesh);
@@ -337,47 +342,82 @@ function removeMesh(){
     }
 }
 
+
+/*var starGeometry;
+
+var starMesh;
+
+var wireTexture = new THREE.ImageUtils.loadTexture( 'images/square.png' );
+wireTexture.wrapS = wireTexture.wrapT = THREE.RepeatWrapping; 
+wireTexture.repeat.set( 40, 40 );
+wireMaterial = new THREE.MeshBasicMaterial( { map: wireTexture, vertexColors: THREE.VertexColors, side:THREE.DoubleSide } );*/
+
 var options =  function() {
 
-     
-    scene.add(SSmesh);
+
+    //scene.add(SSmesh);
 
 
     function generateGeometry() {
-        removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
-        BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
-        //PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
+
+        scene.remove(wireframe);
+        scene.remove(SPmesh);
         
-
+        BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
+        PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
         SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
-
         SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength);
 
         material = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false, transparent : true, opacity: 0 } );
         SPmesh = new THREE.Mesh( SP, material );
         //var color = new THREE.Color( data.density / maxDensity, data.density / maxDensity, data.density / maxDensity );
-        var opacity = data.density / (maxDensity-0.50)  + 0.50;
+        var opacity = data.density / maxDensity + 0.1;
+        console.log(opacity);
         SPmesh.material.opacity =  opacity ;
+
+        lineMat = new THREE.LineBasicMaterial( {
+            color: 0xffffff,
+            transparent: false,
+            opacity: 0.5, 
+            polygonOffset: false
+        } )
+
+        var geo = new THREE.EdgesGeometry(SS, 0.01);
+        //var geo = new THREE.WireframeGeometry(SS);
+
+        wireframe = new THREE.LineSegments( geo, lineMat );
+        //SSmesh.add(wireframe)
+        //SSmesh = new THREE.Mesh( SS, wireframe );
+        //scene.add(wireframe);
+
+        /*starGeometry = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks, true );
+        wireMaterial.map.repeat.set( data.slices, data.stacks );
+
+        starMesh = new THREE.Mesh( starGeometry, wireMaterial);
+        scene.add(starMesh);*/
+
 
 
         //PN.dynamic= true;
         updateGroupGeometry( BHmesh,
             BH
-        );
+            );
         /*updateGroupGeometry( PNmesh,
             PN
-        );*/
+            );*/
         /*updateGroupGeometry( SPmesh,
             SP
-        );*/
-        updateGroupGeometry( SSmesh,
-            SS
-        );
+            );*/
+        /*updateGroupGeometry( SSmesh,
+          SS
+         );*/
         /*PNmesh.position.x =data.translateX;
         PNmesh.position.y = data.translateY + 5;
         PNmesh.position.z =data.translateZ;
         PNmesh.rotation.x = Math.PI / 2;
         PNmesh.rotation.z = Math.PI / 4 - 0.04;*/
+
+        removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
         
 
 
