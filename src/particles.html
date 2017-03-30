@@ -1,141 +1,148 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 
-    <html>
+<html>
 
-    <head>
-        <title>Particles</title>
-        <script type="text/javascript" src="../resources/CSVtoJSONConverter/stars.js"></script>
-        <script type="text/javascript" src="../libs/threeJS/three.js"></script>
-        <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
-
-
+<head>
+    <title>Particles</title>
+    <script type="text/javascript" src="../resources/CSVtoJSONConverter/starsHMY.js"></script>
+    <script type="text/javascript" src="../libs/threeJS/three.js"></script>
+    <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
 
 
 
-        <style>
-            body {
-                /* set margin to 0 and overflow to hidden, to go fullscreen */
-                margin: 0;
-                overflow: hidden;
+
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="Stats-output">
+    </div>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output">
+    </div>
+
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+        // once everything is loaded, we run our Three.js stuff.
+        function init() {
+            //Single or split screen
+            var DualActive = false;
+
+            var aspect = window.innerWidth / window.innerHeight;
+
+            //load the csv file and parse it
+            // create a scene, that will hold all our elements such as objects, cameras and lights.
+            var scene = new THREE.Scene();
+            // create a camera, which defines where we're looking at.
+            var camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
+            var DualCamera1 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
+            var DualCamera2 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
+            DualCamera1.position.x = 30;
+            DualCamera1.position.y = -50;
+            DualCamera1.position.z = -50;
+            DualCamera2.position.x = -30;
+            DualCamera2.position.y = 50;
+            DualCamera2.position.z = 50;
+            DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
+            DualCamera2.lookAt(new THREE.Vector3(10, -20, 0));
+            // create a render and set the size
+            var webGLRenderer = new THREE.WebGLRenderer();
+            //webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+            webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+            webGLRenderer.shadowMapEnabled = true;
+            // position and point the camera to the center of the scene
+            camera.position.x = -30;
+            camera.position.y = 50;
+            camera.position.z = 50;
+            camera.lookAt(new THREE.Vector3(10, -20, 0));
+            // add the output of the renderer to the html element
+            document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
+            webGLRenderer.autoClear = false;
+            //controls
+            controls = new THREE.OrbitControls(camera);
+            controls.rotateSpeed = 1.0;
+            controls.zoomSpeed = 1.2;
+            controls.panSpeed = 0.8;
+            // Helpers
+            // create the particle variables
+            //var particleCount = 180000,
+            var particles = new THREE.Geometry();
+            var multiplyingFactor = 50;
+            // now create the individual particles
+            for (var p = 0; p < array.length; p++) {
+
+                // create a particle with random
+                star = array[p];
+                // position values, -250 -> 250
+                // var pX = Math.random() * 500 - 250;
+                // pY = Math.random() * 500 - 250;
+                // pZ = Math.random() * 500 - 250;
+                particle = new THREE.Vector3(star.x * multiplyingFactor, star.y * multiplyingFactor, star.z * multiplyingFactor);
+
+                // add it to the geometry
+                particles.vertices.push(particle);
             }
-        </style>
-    </head>
+            THREE.ImageUtils.crossOrigin = '';
+            var pMaterial = new THREE.PointsMaterial({
+                color: 0xFFFFFF,
+                size: 20,
+                map: THREE.ImageUtils.loadTexture("https://aerotwist.com/static/tutorials/creating-particles-with-three-js/images/particle.png"),
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+            // create the particle system
+            var particleSystem = new THREE.Points(
+                particles,
+                pMaterial);
 
-    <body>
 
-        <div id="Stats-output">
-        </div>
-        <!-- Div which will hold the Output -->
-        <div id="WebGL-output">
-        </div>
 
-        <!-- Javascript code that runs our Three.js examples -->
-        <script type="text/javascript">
-            // once everything is loaded, we run our Three.js stuff.
-            function init() {
-                //Single or split screen
-                var DualActive = true;
-                
-                var aspect = window.innerWidth / window.innerHeight;
+            // also update the particle system to
+            // sort the particles which enables
+            // the behaviour we want
+            particleSystem.sortParticles = true;
+            scene.add(particleSystem);
 
-                //load the csv file and parse it
-                // create a scene, that will hold all our elements such as objects, cameras and lights.
-                var scene = new THREE.Scene();
-                // create a camera, which defines where we're looking at.
-                var camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
-                var DualCamera1 = new THREE.PerspectiveCamera(45, aspect/2, 1, 5000);
-                var DualCamera2 = new THREE.PerspectiveCamera(45, aspect/2, 1, 5000);
-                DualCamera1.position.x = 30;
-                DualCamera1.position.y = -50;
-                DualCamera1.position.z = -50;
-                DualCamera2.position.x = -30;
-                DualCamera2.position.y = 50;
-                DualCamera2.position.z = 50;
-                DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
-                DualCamera2.lookAt(new THREE.Vector3(10, -20, 0));
-                // create a render and set the size
-                var webGLRenderer = new THREE.WebGLRenderer();
-                //webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
-                webGLRenderer.setSize(window.innerWidth, window.innerHeight);
-                webGLRenderer.shadowMapEnabled = true;
-                // position and point the camera to the center of the scene
-                camera.position.x = -30;
-                camera.position.y = 50;
-                camera.position.z = 50;
-                camera.lookAt(new THREE.Vector3(10, -20, 0));
-                // add the output of the renderer to the html element
-                document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
-                webGLRenderer.autoClear = false;
-                //controls
-                controls = new THREE.OrbitControls(camera);
-                controls.rotateSpeed = 1.0;
-                controls.zoomSpeed = 1.2;
-                controls.panSpeed = 0.8;
-                // Helpers
-                // create the particle variables
-                //var particleCount = 180000,
-                var particles = new THREE.Geometry();
-                // now create the individual particles
-                for (var p = 0; p < array.length; p++) {
+            // black hole initialization
+            var blackHoleGeometry = new THREE.CircleGeometry(100, 32);
+            var blackHoleMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            blackHoleMaterial.side = THREE.DoubleSide;
+            var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
+            scene.add(blackHole);
 
-                    // create a particle with random
-                    star = array[p];
-                    // position values, -250 -> 250
-                    // var pX = Math.random() * 500 - 250;
-                    // pY = Math.random() * 500 - 250;
-                    // pZ = Math.random() * 500 - 250;
-                    particle = new THREE.Vector3(star.x, star.y, star.z);
 
-                    // add it to the geometry
-                    particles.vertices.push(particle);
+
+            function render() {
+                // add some rotation to the system
+                particleSystem.rotation.y += 0.001;
+
+                // render using requestAnimationFrame
+                requestAnimationFrame(render);
+                if (DualActive) {
+                    webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
+                    webGLRenderer.render(scene, camera);
+                    webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
+                    webGLRenderer.render(scene, DualCamera2);
+                } else {
+
+                    webGLRenderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+                    webGLRenderer.render(scene, camera);
                 }
-                THREE.ImageUtils.crossOrigin = '';
-                var pMaterial = new THREE.PointsMaterial({
-                    color: 0xFFFFFF,
-                    size: 20,
-                    map: THREE.ImageUtils.loadTexture("https://aerotwist.com/static/tutorials/creating-particles-with-three-js/images/particle.png"),
-                    blending: THREE.AdditiveBlending,
-                    transparent: true
-                });
-                // create the particle system
-                var particleSystem = new THREE.Points(
-                    particles,
-                    pMaterial);
-
-
-
-                // also update the particle system to
-                // sort the particles which enables
-                // the behaviour we want
-                particleSystem.sortParticles = true;
-                scene.add(particleSystem);
-
-
-
-
-                function render() {
-                    // add some rotation to the system
-                    particleSystem.rotation.y += 0.001;
-
-                                    // render using requestAnimationFrame
-                    requestAnimationFrame(render);
-                    if (DualActive){
-                        webGLRenderer.setViewport( 0, 0, window.innerWidth/2, window.innerHeight );
-                        webGLRenderer.render(scene, camera);
-                        webGLRenderer.setViewport( window.innerWidth/2, 0, window.innerWidth/2, window.innerHeight );
-                        webGLRenderer.render(scene, DualCamera2);
-                    } else {
-
-                        webGLRenderer.setViewport( 0, 0, window.innerWidth, window.innerHeight );
-                        webGLRenderer.render(scene, camera);
-                }
-                }
-
-                render();
-
             }
-            window.onload = init;
-        </script>
-    </body>
 
-    </html>
+            render();
+
+        }
+        window.onload = init;
+    </script>
+</body>
+
+</html>
