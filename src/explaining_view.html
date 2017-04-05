@@ -364,15 +364,12 @@ var options =  function() {
         scene.remove(SPmesh);
         
         BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
-        PN=  new THREE.PlaneGeometry(data.width,data.height,data.slices,data.stacks);
         SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
+        
         SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength);
-
-        material = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false, transparent : true, opacity: 0 } );
-        SPmesh = new THREE.Mesh( SP, material );
-        //var color = new THREE.Color( data.density / maxDensity, data.density / maxDensity, data.density / maxDensity );
+        SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : true, opacity: 0 } );
+        SPmesh = new THREE.Mesh( SP, SPmaterial );
         var opacity = data.density / maxDensity + 0.1;
-        console.log(opacity);
         SPmesh.material.opacity =  opacity ;
 
         lineMat = new THREE.LineBasicMaterial( {
@@ -382,40 +379,26 @@ var options =  function() {
             polygonOffset: false
         } )
 
-        var geo = new THREE.EdgesGeometry(SS, 0.01);
-        //var geo = new THREE.WireframeGeometry(SS);
+        var edgesGeo = new THREE.EdgesGeometry(SS, 0.01);
+        wireframe = new THREE.LineSegments( edgesGeo, lineMat );
 
-        wireframe = new THREE.LineSegments( geo, lineMat );
-        //SSmesh.add(wireframe)
-        //SSmesh = new THREE.Mesh( SS, wireframe );
-        //scene.add(wireframe);
+        var material = new THREE.LineBasicMaterial({
+            color: 0x0000ff
+        });
 
-        /*starGeometry = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks, true );
-        wireMaterial.map.repeat.set( data.slices, data.stacks );
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push(
+            new THREE.Vector3( -5*data.radius, 10, 0 ),
+            new THREE.Vector3( 5*data.radius, 10, 0 )
+            );
 
-        starMesh = new THREE.Mesh( starGeometry, wireMaterial);
-        scene.add(starMesh);*/
+        var line = new THREE.Line( lineGeometry, lineMat );
+        scene.add( line );
 
 
-
-        //PN.dynamic= true;
         updateGroupGeometry( BHmesh,
             BH
-            );
-        /*updateGroupGeometry( PNmesh,
-            PN
-            );*/
-        /*updateGroupGeometry( SPmesh,
-            SP
-            );*/
-        /*updateGroupGeometry( SSmesh,
-          SS
-         );*/
-        /*PNmesh.position.x =data.translateX;
-        PNmesh.position.y = data.translateY + 5;
-        PNmesh.position.z =data.translateZ;
-        PNmesh.rotation.x = Math.PI / 2;
-        PNmesh.rotation.z = Math.PI / 4 - 0.04;*/
+        );
 
         removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
         
@@ -456,40 +439,15 @@ options();
 
 
 
-//scene.add(BHmesh);
-//scene.add(PNmesh);
-
-
 
 var prevFog = false;
-
-
-// var data = {
-//     rotationx : 0,
-//     rotationy : 0
-// };
-// var folder = gui.addFolder( 'Rotation' );
-// folder.add( data, 'rotationx', 0, 0.5 ).step( 0.001 )
-// folder.add( data, 'rotationy', 0, 0.5 ).step( 0.001 )
 
 
 var render = function () {
 
     requestAnimationFrame( render );
 
-        stats.update();
-
-        //SPmesh.opacity = data.density * 1000;
-
-/*        BHmesh.rotation.x += data.rotationx;
-        BHmesh.rotation.y += data.rotationy;
-
-        PNmesh.rotation.x += data.rotationx;
-        PNmesh.rotation.y += data.rotationy;
-
-        SPmesh.rotation.x += data.rotationx;
-        SPmesh.rotation.y += data.rotationy;*/
-
+    stats.update();
 
     renderer.render( scene, camera );
 
