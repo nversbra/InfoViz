@@ -140,7 +140,7 @@ var data = {
         thetaStart : 6,
         thetaLength : 6.3, 
         radius : 5,
-        density : 0.0002
+        density : 0.002
 };
 
 
@@ -199,6 +199,56 @@ var staticStar = function(u, v){
     return new THREE.Vector3(x, y, z);
 }
 
+
+var starPath = function(u, symmetricPart){
+
+    var R = data.radius;  // radius of the star 
+    var rmax =  5 * R; // maximal distance plotted 
+    var r = u * rmax;
+    var R3 = Math.pow(R,3);
+    var M = (4 * Math.PI / 3) * data.density * R3;
+
+    var max_y = Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(rmax-2*M)) - Math.sqrt(8 * M *(R-2*M));
+
+    var y = -max_y; 
+
+    if (M == 0)
+        y = 0;
+    else {
+        if (r > R){
+            y += Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(r-2*M)) - Math.sqrt(8 * M *(R-2*M));
+        } 
+        else {
+            y+= Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M * Math.pow(r,2) / R3));
+        }
+    }
+    
+
+    var x = r * Math.cos(u/10);
+    if (symmetricPart)
+        return new THREE.Vector3(-x, y, 0);
+    else 
+        return new THREE.Vector3(x, y, 0);
+}
+
+var generateStarPath = function(symmetricPart){
+
+    var material = new THREE.LineBasicMaterial({
+        color: 0x0000ff
+    });
+
+    var geometry = new THREE.Geometry();
+    var maxIndex = 5 * data.radius;
+    for (i = 0; i < maxIndex + 5; i++) { 
+        geometry.vertices.push( starPath(i/maxIndex, symmetricPart)); 
+    }
+    //geometry.edges.pop();
+    //geometry.vertices.pop();
+
+    return new THREE.Line( geometry, material );
+}
+
+
 var objects = {
     Funnel : false,
     Plane : false,
@@ -242,23 +292,6 @@ PNmesh.add( new THREE.LineSegments(
 ) );
 
 
-/*SPmesh.add( new THREE.LineSegments(
-
-    new THREE.Geometry(),
-
-    new THREE.LineBasicMaterial( {
-        color: 0xffffff,
-        transparent: true,
-        opacity: data.density * 1000
-    } )
-
-) );*/
-
-
-
-
-
-
 BHmesh.add( new THREE.Mesh(
 
     new THREE.Geometry(),
@@ -285,32 +318,6 @@ PNmesh.add( new THREE.Mesh(
 
 ) );
 
-
-/*SPmesh.add( new THREE.Mesh(
-
-    new THREE.Geometry(),
-
-    new THREE.MeshPhongMaterial( {
-        color: 0x666666,
-        opacity : data.density * 1000, 
-        //side: THREE.DoubleSide,
-        shading: THREE.FlatShading
-    } )
-
-) );*/
-
-/*SSmesh.add( new THREE.Mesh(
-
-    new THREE.Geometry(),
-
-    new THREE.MeshPhongMaterial( {
-        //color: 0x156289,
-        //emissive: 0x072534,
-        side: THREE.DoubleSide
-        //shading: THREE.FlatShading
-    } )
-
-) );*/
 
 
 
@@ -342,15 +349,6 @@ function removeMesh(){
     }
 }
 
-
-/*var starGeometry;
-
-var starMesh;
-
-var wireTexture = new THREE.ImageUtils.loadTexture( 'images/square.png' );
-wireTexture.wrapS = wireTexture.wrapT = THREE.RepeatWrapping; 
-wireTexture.repeat.set( 40, 40 );
-wireMaterial = new THREE.MeshBasicMaterial( { map: wireTexture, vertexColors: THREE.VertexColors, side:THREE.DoubleSide } );*/
 
 var options =  function() {
 
@@ -388,12 +386,16 @@ var options =  function() {
 
         var lineGeometry = new THREE.Geometry();
         lineGeometry.vertices.push(
-            new THREE.Vector3( -5*data.radius, 10, 0 ),
-            new THREE.Vector3( 5*data.radius, 10, 0 )
+            new THREE.Vector3( -6*data.radius, 10, 0 ),
+            new THREE.Vector3( 6*data.radius, 10, 0 )
             );
 
         var line = new THREE.Line( lineGeometry, lineMat );
         scene.add( line );
+
+        scene.add(generateStarPath(true));
+        scene.add(generateStarPath(false));
+
 
 
         updateGroupGeometry( BHmesh,
