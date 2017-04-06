@@ -1,0 +1,246 @@
+.home - restart, .home - text - holder h2 {
+    text - shadow: 1 px 1 px 1 px rgba(0, 0, 0, .004)
+}
+@font - face {
+    font - family: opensans - regular;
+    src: url('/fonts/Univers LT 39 Thin Ultra Condensed-18ccdc5c57.ttf');
+    font - weight: 400;
+    font - style: normal
+}.dg.ac {
+    z - index: 100!important
+}#
+dream - big svg {
+    width: 50 % ;position: absolute;top: 50 % ;left: 50 % ; - webkit - transform: translate(-50 % , -50 % ); - ms - transform: translate(-50 % , -50 % );transform: translate(-50 % , -50 % );z - index: 11
+}#
+dream - big svg span {
+    display: block;float: left
+}#
+dream - big svg.letter {
+    margin: 0 30 px 0 60 px
+}#
+dream - big svg.square {
+    width: 15 px;height: 15 px;margin - top: 83 px;background: #fff; - webkit - transform: rotate(45 deg); - ms - transform: rotate(45 deg);transform: rotate(45 deg)
+}#
+big - dream, #imagine, #proud, #pulse, #strive, #think, #work - hard, body, html {
+        background: #000}# dream - big canvas {
+            position: absolute;top: 0;left: 0
+        }#
+        dream - big canvas: nth - child(2) {
+            opacity: 1
+        }#
+        dream - big canvas: nth - child(3) {
+            opacity: 0
+        }#
+        dream - big.mobile svg {
+            width: 50 %
+        }
+        @font - face {
+            font - family: Montserrat;
+            src: url(.. / fonts / montserrat / montserrat - regular - webfont - 20 c2332f5a.eot);
+            src: url(.. / fonts / montserrat / montserrat - regular - webfont - 20 c2332f5a.eot ? #iefix) format("embedded-opentype"), url(.. / fonts / montserrat / montserrat - regular - webfont - 642 d40bae8.woff2) format("woff2"), url(.. / fonts / montserrat / montserrat - regular - webfont - a91db30592.woff) format("woff"), url(.. / fonts / montserrat / montserrat - regular - webfont - f769e79ce5.ttf) format("truetype"), url(.. / fonts / montserrat / montserrat - regular - webfont - cbaa14081a.svg# Montserrat) format("svg");
+            font - weight: 400;
+            font - style: normal
+        }
+        @font - face {
+            font - family: Montserrat;
+            src: url(.. / fonts / montserrat / montserrat - bold - webfont - 5 bd5d0a67e.eot);
+            src: url(.. / fonts / montserrat / montserrat - bold - webfont - 5 bd5d0a67e.eot ? #iefix) format("embedded-opentype"), url(.. / fonts / montserrat / montserrat - bold - webfont - b45900c29a.woff2) format("woff2"), url(.. / fonts / montserrat / montserrat - bold - webfont - 04 ce08f833.woff) format("woff"), url(.. / fonts / montserrat / montserrat - bold - webfont - 807 b84db70.ttf) format("truetype"), url(.. / fonts / montserrat / montserrat - bold - webfont - 6 f5ecbb8dd.svg# Montserrat) format("svg");
+            font - weight: 700;
+            font - style: normal
+        }
+        @font - face {
+            font - family: Univers Ultra Cond;
+            src: url(.. / fonts / univers / UniversLTStd - UltraCn - 2 c9ede32de.eot);
+            src: url(.. / fonts / univers / UniversLTStd - UltraCn - 2 c9ede32de.eot ? #iefix) format("embedded-opentype"), url(.. / fonts / univers / UniversLTStd - UltraCn - 0 a108a8ffe.woff2) format("woff2"), url(.. / fonts / univers / UniversLTStd - UltraCn - 0 a108a8ffe.woff) format("woff"), url(.. / fonts / univers / UniversLTStd - UltraCn - e7659f4ed6.ttf) format("truetype"), url('../fonts/univers/UniversLTStd-UltraCn-e134eab4c2.svg#Univers Ultra Cond') format("svg");
+            font - weight: 400;
+            font - style: normal
+        }
+        @media screen and(-webkit - min - device - pixel - ratio: 0) {
+            @font - face {
+                font - family: Montserrat;
+                src: url(.. / fonts / montserrat / montserrat - regular - webfont - cbaa14081a.svg# Montserrat) format("svg")
+            }
+            @font - face {
+                font - family: Montserrat;
+                src: url(.. / fonts / montserrat / montserrat - bold - webfont - 6 f5ecbb8dd.svg# Montserrat) format("svg")
+            }
+            @font - face {
+                font - family: Univers Ultra Cond;
+                src: url('../fonts/univers/UniversLTStd-UltraCn-e134eab4c2.svg#Univers Ultra Cond') format("svg")
+            }
+        }*{-ms - user - select: none;user - select: none; - moz - user - select: none; - webkit - user - select: none
+        }
+        body,
+        html {
+            margin: 0;padding: 0;width: 100 % ;height: 100 % ; - webkit - font - smoothing: antialiased; - moz - osx - font - smoothing: grayscale
+        }.hide {
+            display: none
+        }.hidden,
+        .invisible {
+            opacity: 0;visibility: hidden
+        }#
+        dream - big,
+        #experiences,
+        #home,
+        #imagine,
+        #proud,
+        #pulse,
+        #smile,
+        #strive,
+        #think,
+        #work - hard {
+            overflow: hidden;position: absolute;left: 0;top: 0;width: 100 % ;height: 100 %
+        }.bottom {
+            position: absolute;bottom: 30 px;right: 40 px;overflow: hidden;z - index: 300
+        }.bottom.bt - artist {
+            color: #686868;font:normal normal 10px/18px Montserrat;float:left;text-transform:uppercase;text-decoration:none;border:none;height:18px}.bottom .bt-artist b{font-weight:400;color:# fff
+        }.bottom.bt - sound {
+            width: 28 px;height: 12 px;float: left;position: relative;margin - left: 22 px
+        }.bottom.bt - sound span {
+            overflow: hidden;display: inline - block;width: 28 px;height: 10 px;line - height: 0;font - size: 0;position: absolute;left: 0;bottom: 0;transition: height 250 ms
+        }.experience - text - holder h2,
+        .experience - tuto - holder h2,
+        .home - text - holder h2 {
+            font - family: Montserrat;
+            font - size: 13 px;
+            text - decoration: none;
+            font - style: normal;
+            font - weight: 400;
+            text - transform: uppercase;
+            text - align: center
+        }.experience - underline - text: before,
+        .home - underline - text: before {
+            content: "";transition: all .3 s ease - in -out 0 s
+        }.bottom.bt - sound span img {
+            position: absolute;left: 0;right: 0;bottom: 0
+        }.bottom.bt - sound.disabled span {
+            height: 2 px
+        }.bottom - socials {
+            position: absolute;bottom: 30 px;left: 40 px;overflow: hidden;z - index: 300
+        }.bottom - socials a {
+            float: left;margin - right: 16 px
+        }.bottom - socials.bt - in svg,
+        .bottom - socials.bt - tw svg {
+            width: 16 px;height: 16 px
+        }.bottom - socials.bt - fb svg {
+            width: 14 px;height: 13 px
+        }.mobile.bottom {
+            bottom: 15 px;right: 15 px
+        }.mobile.bottom - socials {
+            bottom: 15 px;left: 15 px
+        }.experience - progress - bar {
+            position: absolute;bottom: 0;left: 0;width: 0;height: 4 px;background: #fff;z - index: 300;border - top: 1 px solid# fff
+        }.mobile.experience - progress - bar,
+        .tablet.experience - progress - bar {
+            height: 4 px
+        }.experience - canvas - wrapper {
+            overflow: hidden;width: 100 % ;height: 100 %
+        }.experience - text - holder {
+            position: absolute;left: 50 % ;top: 75 % ; - ms - transform: translateX(-50 % );transform: translateX(-50 % ); - webkit - transform: translateX(-50 % );z - index: 300;cursor: pointer
+        }.experience - text - holder h2 {
+            color: #fff
+        }.experience - text - holder.experience - white - text {
+            background - color: #fff;
+            color: #000;position:absolute;top:0;left:50%;-ms-transform:translateX(-50%);transform:translateX(-50%);-webkit-transform:translateX(-50%);padding:0 15px}.experience-underline-text:before{position:absolute;width:100%;height:2px;top:24px;left:0;background-color:# fff;
+            color: #000;visibility:hidden;-webkit-transform:scaleX(0);-ms-transform:scaleX(0);transform:scaleX(0)}.experience-underline-text-anim{color:# fff
+        }.experience - underline - text - anim: before {
+            visibility: visible; - webkit - transform: scaleX(1); - ms - transform: scaleX(1);transform: scaleX(1)
+        }.experience - tuto - holder,
+        .home - text - holder {
+            position: absolute;top: 75 % ; - ms - transform: translateX(-50 % );left: 50 % ;z - index: 300
+        }.experience - tuto - holder {
+            transform: translateX(-50 % ); - webkit - transform: translateX(-50 % );display: none
+        }.experience - tuto - holder h2 {
+            color: #fff
+        }#
+        imagine canvas,
+        .home - canvas - wrapper {
+            overflow: hidden;width: 100 % ;height: 100 %
+        }.home - text - holder {
+            transform: translateX(-50 % ); - webkit - transform: translateX(-50 % );cursor: pointer
+        }.home - text - holder h2 {
+            letter - spacing: 1 px
+        }.home - underline - text {
+            position: relative;color: #fff
+        }.home - white - text {
+            background - color: #fff;
+            position: absolute;
+            top: 0;
+            left: 50 % ; - ms - transform: translateX(-50 % );
+            transform: translateX(-50 % ); - webkit - transform: translateX(-50 % );
+            padding: 0 15 px
+        }.home - wish - white - text {
+            background - color: #fff;
+            padding: 0 10 px;
+            color: #000;display:inline-block;position:relative}# home - wish, .home - underline - text - anim {
+                    color: #fff
+                }.home - underline - text: before {
+                    position: absolute;width: 100 % ;height: 2 px;top: 24 px;left: 0;background - color: #fff;visibility: hidden; - webkit - transform: scaleX(0); - ms - transform: scaleX(0);transform: scaleX(0)
+                }.home - underline - text - anim: before {
+                    visibility: visible; - webkit - transform: scaleX(1); - ms - transform: scaleX(1);transform: scaleX(1)
+                }.home - restart - holder {
+                    position: absolute;bottom: 59 px;left: calc(50 % -(144 px / 2)); - webkit - transform: translateX(-50 % ); - ms - transform: translateX(-50 % );transform: translateX(-50 % )
+                }.home - restart {
+                    width: 64 px;position: relative;color: #fff;text - transform: uppercase;font - family: Montserrat;font - weight: 400;font - size: 12 px;letter - spacing: 1 px;cursor: pointer;z - index: 300
+                }.home - restart span {
+                    position: absolute;padding: 12 px 10 px 10 px 50 px
+                }.home - restart span: before {
+                    top: 7 px;left: 15 px;position: absolute
+                }.home - restart - out: before {
+                    content: url(.. / images / home / ic - restart - white.png)
+                }.home - restart - over {
+                    background - color: #fff;
+                    color: #000}.home-restart-over:before{content:url(../images/home/ic-restart-black.png)}.mobile .home-restart-holder{bottom:auto;top:20px}# strive, .strive__sketch, .strive__title {
+                        width: 100 % ;top: 0;left: 0;height: 100 % ;position: absolute
+                    }#
+                    proud, #proud canvas, #think canvas {
+                        overflow: hidden;width: 100 % ;height: 100 %
+                    }#
+                    strive {
+                        overflow: hidden
+                    }#
+                    strive, #strive * {
+                        cursor: none!important
+                    }#
+                    strive.hide {
+                        cursor: inherit
+                    }#
+                    strive.activated.strive__title {
+                        opacity: 0;transition: opacity .5 s
+                    }#
+                    strive.activated.strive__cursor {
+                        opacity: 1;transition: opacity .5 s
+                    }.strive__title {
+                        display: block;text - align: center;opacity: 1;pointer - events: none
+                    }.strive__title img, .strive__title: before {
+                        display: inline - block;vertical - align: middle
+                    }.strive__title: before {
+                        content: "";height: 100 % ;margin - left: -.25e m
+                    }.strive__title img {
+                        max - width: calc(100 % -100 px)
+                    }
+                    @media screen and(max - width: 768 px) {.strive__title img {
+                            max - width: calc(100 % -200 px)
+                        }
+                    }.strive__circle, .strive__circle_target, .strive__cursor, .strive__middle {
+                        position: absolute;top: -5 px;left: -5 px;z - index: 10;width: 10 px;height: 10 px;border - radius: 50 % ;background - color: red;pointer - events: none
+                    }.strive__middle {
+                        background - color: green
+                    }.strive__circle, .strive__circle_target {
+                        width: 0;height: 0;background - color: #00f;opacity:.5}.strive__cursor{width:auto;height:auto;left:0;top:0;border-radius:0;border-bottom:20px # fff solid;border - left: 5 px transparent solid;border - right: 5 px transparent solid;background - color: transparent;opacity: 0
+                    }.mobile.portrait# experiences, .mobile.portrait# home {
+                        display: none
+                    }.mobile.portrait# mobile - portrait {
+                        display: block
+                    }.mobile.landscape# mobile - portrait {
+                        display: none
+                    }#
+                    mobile - portrait {
+                        display: none;position: absolute;top: 0;left: 0;width: 100 % ;height: 100 % ;z - index: 999;background: url(/images/mobile - portrait - fallback.jpg) no - repeat;background - size: cover
+                    }#
+                    mobile - portrait.mobile - text - holder {
+                        position: absolute;left: 50 % ;top: 75 % ;width: 80 % ; - ms - transform: translateX(-50 % );transform: translateX(-50 % ); - webkit - transform: translateX(-50 % )
+                    }#
+                    mobile - portrait.mobile - text - holder h2 {
+                        color: #fff;text - decoration: none;font - style: normal;font - family: Montserrat;font - weight: 400;text - transform: uppercase;font - size: 13 px;text - align: center
+                    }
