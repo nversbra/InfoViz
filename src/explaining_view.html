@@ -50,9 +50,7 @@
         top: 100px;
     }
     #next_round{
-        background-color: white;
-        color: black;
-        border-radius: 50%;
+        color: white;
         position: relative;
         top: 150px;
         left: 250px;
@@ -64,10 +62,6 @@
       pointer-events:none;
   }
 
-
-  #planeLabel{
-    top: 400px;
-    left: 500px;
 }
 </style>
 <style type="text/css"></style><style type="text/css">.dg ul{list-style:none;margin:0;padding:0;width:100%;clear:both}.dg.ac{position:fixed;top:0;left:0;right:0;height:0;z-index:0}.dg:not(.ac) .main{overflow:hidden}.dg.main{-webkit-transition:opacity .1s linear;transition:opacity .1s linear}.dg.main.taller-than-window{overflow-y:auto}.dg.main.taller-than-window .close-button{opacity:1;margin-top:-1px;border-top:1px solid #2c2c2c}.dg.main ul.closed .close-button{opacity:1!important}.dg.main .close-button.drag,.dg.main:hover .close-button{opacity:1}.dg.main .close-button{-webkit-transition:opacity .1s linear;transition:opacity .1s linear;border:0;position:absolute;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}.dg.main .close-button:hover{background-color:#111}.dg.a{float:right;margin-right:15px;overflow-x:hidden}.dg.a.has-save>ul{margin-top:27px}.dg.a.has-save>ul.closed{margin-top:0}.dg.a .save-row{position:fixed;top:0;z-index:1002}.dg li{-webkit-transition:height .1s ease-out;transition:height .1s ease-out}.dg li:not(.folder){cursor:auto;height:27px;line-height:27px;overflow:hidden;padding:0 4px 0 5px}.dg li.folder{padding:0;border-left:4px solid transparent}.dg li.title{cursor:pointer;margin-left:-4px}.dg .closed li:not(.title),.dg .closed ul li,.dg .closed ul li>*{height:0;overflow:hidden;border:0}.dg .cr{clear:both;padding-left:3px;height:27px}.dg .property-name{cursor:default;float:left;clear:left;width:40%;overflow:hidden;text-overflow:ellipsis}.dg .c{float:left;width:60%}.dg .c input[type=text]{border:0;margin-top:4px;padding:3px;width:100%;float:right}.dg .has-slider input[type=text]{width:30%;margin-left:0}.dg .slider{float:left;width:66%;margin-left:-5px;margin-right:0;height:19px;margin-top:4px}.dg .slider-fg{height:100%}.dg .c input[type=checkbox]{margin-top:9px}.dg .c select{margin-top:5px}.dg .cr.boolean,.dg .cr.boolean *,.dg .cr.function,.dg .cr.function *,.dg .cr.function .property-name{cursor:pointer}.dg .selector{display:none;position:absolute;margin-left:-9px;margin-top:23px;z-index:10}.dg .c:hover .selector,.dg .selector.drag{display:block}.dg li.save-row{padding:0}.dg li.save-row .button{display:inline-block;padding:0 6px}.dg.dialogue{background-color:#222;width:460px;padding:15px;font-size:13px;line-height:15px}#dg-new-constructor{padding:10px;color:#222;font-family:Monaco,monospace;font-size:10px;border:0;resize:none;box-shadow:inset 1px 1px 1px #888;word-wrap:break-word;margin:12px 0;display:block;width:440px;overflow-y:scroll;height:100px;position:relative}#dg-local-explain{display:none;font-size:11px;line-height:17px;border-radius:3px;background-color:#333;padding:8px;margin-top:10px}#dg-local-explain code{font-size:10px}#dat-gui-save-locally{display:none}.dg{color:#eee;font:11px Lucida Grande,sans-serif;text-shadow:0 -1px 0 #111}.dg.main::-webkit-scrollbar{width:5px;background:#1a1a1a}.dg.main::-webkit-scrollbar-corner{height:0;display:none}.dg.main::-webkit-scrollbar-thumb{border-radius:5px;background:#676767}.dg li:not(.folder){background:#1a1a1a;border-bottom:1px solid #2c2c2c}.dg li.save-row{line-height:25px;background:#dad5cb;border:0}.dg li.save-row select{margin-left:5px;width:108px}.dg li.save-row .button{margin-left:5px;margin-top:1px;border-radius:2px;font-size:9px;line-height:7px;padding:4px 4px 5px;background:#c5bdad;color:#fff;text-shadow:0 1px 0 #b0a58f;box-shadow:0 -1px 0 #b0a58f;cursor:pointer}.dg li.save-row .button.gears{background:#c5bdad url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAANCAYAAAB/9ZQ7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpiYKAU/P//PwGIC/ApCABiBSAW+I8AClAcgKxQ4T9hoMAEUrxx2QSGN6+egDX+/vWT4e7N82AMYoPAx/evwWoYoSYbACX2s7KxCxzcsezDh3evFoDEBYTEEqycggWAzA9AuUSQQgeYPa9fPv6/YWm/Acx5IPb7ty/fw+QZblw67vDs8R0YHyQhgObx+yAJkBqmG5dPPDh1aPOGR/eugW0G4vlIoTIfyFcA+QekhhHJhPdQxbiAIguMBTQZrPD7108M6roWYDFQiIAAv6Aow/1bFwXgis+f2LUAynwoIaNcz8XNx3Dl7MEJUDGQpx9gtQ8YCueB+D26OECAAQDadt7e46D42QAAAABJRU5ErkJggg==) 2px 1px no-repeat;height:7px;width:8px}.dg li.save-row .button:hover{background-color:#bab19e;box-shadow:0 -1px 0 #b0a58f}.dg li.folder{border-bottom:0}.dg li.title{padding-left:16px;background:#000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;cursor:pointer;border-bottom:1px solid hsla(0,0%,100%,.2)}.dg .closed li.title{background-image:url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==)}.dg .cr.boolean{border-left:3px solid #806787}.dg .cr.color{border-left:3px solid}.dg .cr.function{border-left:3px solid #e61d5f}.dg .cr.number{border-left:3px solid #2fa1d6}.dg .cr.number input[type=text]{color:#2fa1d6}.dg .cr.string{border-left:3px solid #1ed36f}.dg .cr.string input[type=text]{color:#1ed36f}.dg .cr.boolean:hover,.dg .cr.function:hover{background:#111}.dg .c input[type=text]{background:#303030;outline:none}.dg .c input[type=text]:hover{background:#3c3c3c}.dg .c input[type=text]:focus{background:#494949;color:#fff}.dg .c .slider{background:#303030;cursor:ew-resize}.dg .c .slider-fg{background:#2fa1d6;max-width:100%}.dg .c .slider:hover{background:#3c3c3c}.dg .c .slider:hover .slider-fg{background:#44abda}</style></head><body>
@@ -87,10 +81,7 @@
 
 <div> 
     <p id="narration"> </p>
-    <a onclick="forward()" id="next_round">&#8250;</a>
-    <!--<p id="planeLabel" class="textLabel"> </p>
-    <p id="wireframeLabel" class="textLabel"> </p>-->
-
+    <p onclick="forward()" id="next_round">&#8250;</p>
 </div>
 <script>
 
@@ -98,9 +89,16 @@
 var gui = new dat.GUI();
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 3000);
-camera.position.z = 60;
-camera.position.x = -30;
-camera.position.y = 20;
+
+// initial camera position 
+camera.position.z = 5 * Math.sin(3* Math.PI / 4);
+camera.position.x = 5 * Math.cos(3* Math.PI / 4);
+camera.position.y =  2;
+camera.lookAt(0, 0, 0);
+
+var camStepsIndex = false; 
+var totalNumberOfCamSteps = 0;
+var camMoveDirection = new THREE.Vector3(0,0,0);
 
 var renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -109,7 +107,7 @@ renderer.setClearColor( 0x00000, 0 );
 document.body.appendChild( renderer.domElement );
 
 var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-orbit.enableZoom = true;
+orbit.enabled = true; 
 
 
 var stats= new Stats();
@@ -119,10 +117,7 @@ stats.domElement.style.zIndex = 100;
 container = document.getElementById( 'ThreeJS' );
 container.appendChild( stats.domElement );
 
-
 var textLabels = []; 
-
-
 
 var maxDensity = 0.004; 
 
@@ -137,17 +132,15 @@ var data = {
     thetaLength : 6.3, 
     radius : 5,
     planeY : 5,
+    meshOffset : 5,
     maxRadiusFactor : 5,
     density : 0.001
 };
 
-var narrationPhases = ["init", "2D", "flatPath", "curved"];
+var narrationPhases = ["init", "2D", "flatPath", "addStar", "massInteraction"];
 var narrationIndex = 0; 
 var narrationPhase = narrationPhases[narrationIndex];
 var needsUpdate = false;
-
-
-
 
 var SPmesh = new THREE.Object3D();
 var SSmesh = new THREE.Object3D();
@@ -156,6 +149,8 @@ var radialPlane;
 var nonCurvedPath;
 var curvedPathLeft; 
 var curvedPathRight; 
+var captionRadialPlane; 
+var captionWireFrame;
 
 var lineMat = new THREE.LineBasicMaterial( {
     color: 0xffffff,
@@ -165,7 +160,7 @@ var lineMat = new THREE.LineBasicMaterial( {
 } );
 
 var pathMat = new THREE.LineBasicMaterial( {
-    color: 0x000000,
+    color: 0xffffff,
     transparent: false,
     opacity: 0.5, 
     polygonOffset: false,
@@ -186,7 +181,8 @@ var createLabel = function(parentThreeJSObject){
     div.style.position = 'absolute';
     div.style.width = 100;
     div.style.height = 100;
-    div.innerHTML = "hi there!";
+    // this is updated once the scene is rendered 
+    div.innerHTML = "";
     div.style.top = -1000;
     div.style.left = -1000;
 
@@ -199,101 +195,89 @@ var createLabel = function(parentThreeJSObject){
       setHTML: function(html) {
         this.element.innerHTML = html;
     },
-      /*setParent: function(threejsobj) {
-        this.parent = threejsobj;
-    },*/
-    updatePosition: function() {
-        if(parent) {
-            this.position.copy(this.parent.position);
+          /*setParent: function(threejsobj) {
+            this.parent = threejsobj;
+        },*/
+        updatePosition: function() {
+            if(parent) {
+                this.position.copy(this.parent.position);
+                this.position.x += data.maxRadiusFactor * data.radius;
+            }
+            var coords2d = this.get2DCoords();
+            this.element.style.left = (coords2d.x + 20) + 'px';
+            this.element.style.top = (coords2d.y + 50) + 'px';
+        },
+        get2DCoords: function() {
+            var vector = this.position.project(camera);
+            vector.x = (vector.x + 1)/2 * window.innerWidth;
+            vector.y = -(vector.y - 1)/2 * window.innerHeight;
+            return vector;
         }
-        var coords2d = this.get2DCoords();
-        this.element.style.left = coords2d.x + 'px';
-        this.element.style.top = coords2d.y + 'px';
-    },
-    get2DCoords: function() {
-        var vector = this.position.project(camera);
-        vector.x = (vector.x + 1)/2 * window.innerWidth;
-        vector.y = -(vector.y - 1)/2 * window.innerHeight;
-        return vector;
+    };
+}
+
+var type = function(textLabel, text, textIndex) {
+    textLabel.element.innerHTML = text.substr(0, textIndex++);
+    if(textIndex < text.length+1) {
+        setTimeout(function(){
+            type(textLabel, text, textIndex++);
+        }, 60);
     }
-};
+    //return true; 
 }
 
 var initFlatGeometry = function(){
 
-    //create the plane wireframe 
-    //planeGeometry = new THREE.PlaneGeometry( 30, 30, data.slices, data.stacks  );
-    //var planeEdgesGeo = new THREE.EdgesGeometry(planeGeometry, 0.00001);
-    //planeWireframe = new THREE.LineSegments( planeEdgesGeo, lineMat );
-    var planeMaterial = new THREE.MeshPhongMaterial( {color: 0xD3D3D3, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('../images/noise-background.jpeg')} );
-    //var plane = new THREE.Mesh( planeGeometry, planeMaterial );
-    //plane.rotation.x = Math.PI / 2;
-    //plane.position.y = data.planeY;
-
-    var RF = new THREE.CircleGeometry( data.maxRadiusFactor * data.radius, 32 );
-    var radialPlane = new THREE.Mesh( RF, planeMaterial );
-    radialPlane.position.y = data.planeY;
-    radialPlane.rotation.x = Math.PI / 2;
-
-    var label = createLabel(radialPlane);
-    label.setHTML("testing testing testing");
-    this.ThreeJS.appendChild(label.element);
-    textLabels.push(label);
-
-    scene.add(radialPlane);
-
-
-
-    /*var label = makeTextSprite( " This is a 2D slice from what you see when you\'re far away. " ,
-        { fontsize: 40, borderColor: {r:255, g:255, b:255, a:1.0}, backgroundColor: {r:255, g:255, b:255, a:1} } );
-    label.position.set(data.maxRadiusFactor*data.radius + 5,data.planeY,0);
-    scene.add( label );*/
-
-    /*var canvas1 = document.createElement('canvas');
-    var context1 = canvas1.getContext('2d');
-    context1.font = "8px Verdana";
-    context1.fillStyle = "rgba(255,255,255,0.95)";
-    context1.fillText('Hello, world! Hello, world! Hello, world!', 0, 50);
-    
-    // canvas contents will be used for a texture
-    var texture1 = new THREE.Texture(canvas1) 
-    texture1.needsUpdate = true;
-      
-    var material1 = new THREE.MeshBasicMaterial( {map: texture1, side:THREE.DoubleSide } );
-    material1.transparent = true;
-    var mesh1 = new THREE.Mesh(
-        new THREE.PlaneGeometry(canvas1.width, canvas1.height),
-        material1
-    );
-    mesh1.position.set(100,data.planeY,0);
-    //mesh1.rotation.x = Math.PI / 2;
-    scene.add( mesh1 );*/
-
-    //scene.add( circle );
-
-    /*RF = new THREE.ParametricGeometry( radialFlat, data.slices, data.stacks );
+    var planeMaterial = new THREE.MeshPhongMaterial( {color: 0xD3D3D3, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('../images/black_background.jpg')} );
+    var RF = new THREE.CircleGeometry( data.maxRadiusFactor * data.radius, 100 );
     radialPlane = new THREE.Mesh( RF, planeMaterial );
-    radialPlane.position.y = data.planeY;*/
-    //var edgesGeoRF = new THREE.Geometry(RF, 0);
-    //radialPlane = new THREE.LineSegments( RF, planeMaterial );
-    
+    //radialPlane.position.y = data.planeY;
+    radialPlane.rotation.x = Math.PI / 2; //+ Math.PI / 10 ;
+    //radialPlane.position.x = data.meshOffset;
+
+    scene.add(radialPlane);    
 }
 
-var initFlatPath = function(){
-
-    // create the non-curved path 
+/*var initFlatPath = function(){
+    // create the flat path 
     var lineGeometry = new THREE.Geometry();
     lineGeometry.vertices.push(
-        new THREE.Vector3( -data.maxRadiusFactor*data.radius, data.planeY, 0 ),
-        new THREE.Vector3( data.maxRadiusFactor*data.radius, data.planeY, 0 )
-        );
+        new THREE.Vector3( -data.maxRadiusFactor*data.radius, 0, 0 ),
+        new THREE.Vector3( data.maxRadiusFactor*data.radius, 0, 0 )
+    );
     nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
+    //nonCurvedPath.position.x = data.meshOffset;
     scene.add(nonCurvedPath);
+}*/
 
+var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments){
+    if (segmentIndex < totalNumberOfSegments){
+        setTimeout(function(){
+            var lineGeometry = new THREE.Geometry();
+            var beginPoint = -totalLength/2;
+            var endPoint = beginPoint + totalLength/totalNumberOfSegments * segmentIndex;
+            lineGeometry.vertices.push(
+                new THREE.Vector3( beginPoint, 0, 0 ),
+                new THREE.Vector3( endPoint, 0, 0 ));
+            nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
+            scene.add(nonCurvedPath);
+            segmentIndex++;
+            animateFlatPath(segmentIndex, totalLength, totalNumberOfSegments);
+        }, 30);
+    };
+}
+
+var moveCamera = function(){
+    if (camStepsIndex < totalNumberOfCamSteps){
+        var increment =  camMoveDirection.clone().divideScalar(totalNumberOfCamSteps);
+        camera.position.add(increment);
+        camera.lookAt(0, 0, 0);
+        camStepsIndex++;
+    };
 }
 
 
-var initSpheres = function(){
+var initSphere = function(){
 
       //create the sphere 
       SP = new THREE.SphereGeometry(data.radius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength);
@@ -301,44 +285,58 @@ var initSpheres = function(){
       SPmesh = new THREE.Mesh( SP, SPmaterial );
       var opacity = data.density / maxDensity + 0.6;
       SPmesh.material.opacity =  opacity ;
+      //SPmesh.position.y = data.planeY;
+      //SPmesh.position.x = data.meshOffset;
+      scene.add(SPmesh);     
+}
 
-      SPmesh.position.y = data.planeY;
+var initWireframe = function(){
+
+    //create the geometry wireframe
+    SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
+    var edgesGeo = new THREE.EdgesGeometry(SS, 0.01);
+    wireframe = new THREE.LineSegments( edgesGeo, lineMat );
+
+    wireframe.position.y = -data.meshOffset;
+
+    // create the paths 
+    curvedPathLeft = generateStarPath(true, pathMat); 
+    curvedPathRight = generateStarPath(false, pathMat);
+
+    curvedPathLeft.position.y = -data.meshOffset;
+    curvedPathRight.position.y = -data.meshOffset;
+
+    scene.add( wireframe );
+    scene.add( curvedPathLeft );
+    scene.add( curvedPathRight );
+}
 
 
-        // add everything to the scene
-        scene.add(SPmesh);
+var initLabelsStarPhase = function(){
+    captionRadialPlane = createLabel(radialPlane);
+    this.ThreeJS.appendChild(captionRadialPlane.element);
+    textLabels.push(captionRadialPlane);
+
+    captionWireFrame = createLabel(wireframe);
+    this.ThreeJS.appendChild(captionWireFrame.element);
+    textLabels.push(captionWireFrame);
+}
+
+
+var interaction =  function() {
+
+    function updateGeometryDensity() {
+        scene.remove(wireframe);
+        scene.remove(curvedPathLeft);
+        scene.remove(curvedPathRight);
+        var opacity = data.density / maxDensity + 0.6;
+        SPmesh.material.opacity =  opacity ;
+
+        initWireframe();
+
         
 
-    }
-
-
-    var interaction =  function() {
-
-        function updateGeometryDensity() {
-
-
-            scene.remove(wireframe);
-            scene.remove(curvedPathLeft);
-            scene.remove(curvedPathRight);
-
-            var opacity = data.density / maxDensity + 0.2;
-            SPmesh.material.opacity =  opacity ;
-
-
-        //create the geometry wireframe
-        SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
-        var edgesGeo = new THREE.EdgesGeometry(SS, 0.01);
-        wireframe = new THREE.LineSegments( edgesGeo, lineMat );
-
-        // create the paths 
-        curvedPathLeft = generateStarPath(true, pathMat); 
-        curvedPathRight = generateStarPath(false, pathMat);
-
-        scene.add( wireframe );
-        scene.add( curvedPathLeft );
-        scene.add( curvedPathRight );
-
-        //removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
+    //removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
     }
 
     var folder = gui.addFolder( 'Controls' );
@@ -370,74 +368,6 @@ var initSpheres = function(){
 
 };
 
-/*function makeTextSprite( message, parameters )
-{
-    if ( parameters === undefined ) parameters = {};
-    
-    var fontface = parameters.hasOwnProperty("fontface") ? 
-        parameters["fontface"] : "Verdana";
-    
-    var fontsize = parameters.hasOwnProperty("fontsize") ? 
-        parameters["fontsize"] : 18;
-    
-    var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
-        parameters["borderThickness"] : 4;
-    
-    var borderColor = parameters.hasOwnProperty("borderColor") ?
-        parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
-    
-    var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
-        parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
-    //var spriteAlignment = THREE.SpriteAlignment.topLeft;
-        
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-    context.font = fontsize + "px " + fontface;
-    
-    // get size data (height depends only on font size)
-    var metrics = context.measureText( message );
-    var textWidth = metrics.width;
-    
-    // background color
-    context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
-                                  + backgroundColor.b + "," + backgroundColor.a + ")";
-    // border color
-    context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
-                                  + borderColor.b + "," + borderColor.a + ")";
-    context.lineWidth = borderThickness;
-    //roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
-    // 1.4 is extra height factor for text below baseline: g,j,p,q.
-    
-    // text color
-    context.fillStyle = "rgba(255, 255, 255, 1.0)";
-    context.fillText( message, borderThickness, fontsize + borderThickness);
-    
-    // canvas contents will be used for a texture
-    var texture = new THREE.Texture(canvas) 
-    texture.needsUpdate = true;
-    var spriteMaterial = new THREE.SpriteMaterial( 
-        { map: texture, useScreenCoordinates: false } );
-    var sprite = new THREE.Sprite( spriteMaterial );
-    //sprite.scale.set(50,10,1.0);
-    return sprite;  
-}
-
-function roundRect(ctx, x, y, w, h, r) 
-{
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();   
-}*/
 
 var narrative = function(){
 
@@ -449,11 +379,27 @@ var narrative = function(){
         }
         else if (narrationPhase == "flatPath"){
             document.getElementById('narration').innerHTML = "This is a path through the flat space.";
-            initFlatPath();
+            animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 100);
+            var finalCameraPosition = new THREE.Vector3(0,4,50);
+            camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+            totalNumberOfCamSteps = 400;
+            camStepsIndex=0;
         }   
-        else if (narrationPhase == "curved"){
+        else if (narrationPhase == "addStar"){
             document.getElementById('narration').innerHTML = "Now we add a heavy object, such as a star. <br> The presence of the mass curves the 2D space.";
-            initSpheres();
+            initSphere();
+            initWireframe();
+            initLabelsStarPhase();
+            type(captionRadialPlane, "This is what you see.", 0);
+            type(captionWireFrame, "This is the underlying structure of space.", 0);
+            var finalCameraPosition = new THREE.Vector3(5,2,60);
+            camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+            totalNumberOfCamSteps = 100;
+            camStepsIndex=0;
+            
+        }
+        else if (narrationPhase == "massInteraction"){
+            document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
             interaction();
         }
         else
@@ -466,7 +412,6 @@ var narrative = function(){
 
 }
 
-
 var render = function () {
 
     narrative();
@@ -475,14 +420,12 @@ var render = function () {
 
     for(var i=0; i<textLabels.length; i++) {
       textLabels[i].updatePosition();
-  }
+    }
 
-  renderer.render( scene, camera );
+    moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
+    renderer.render( scene, camera );
 
 };
-
-
-
 
 
 window.addEventListener( 'resize', function () {
@@ -496,10 +439,6 @@ window.addEventListener( 'resize', function () {
 
 
 initLights();
-//initGeometries();
-//interaction();
-//narrative();
-
 render();
 
 
