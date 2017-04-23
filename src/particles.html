@@ -29,6 +29,7 @@
     <div id="WebGL-output">
     </div>
 
+
     <!-- Javascript code that runs our Three.js examples -->
     <script type="text/javascript">
         // once everything is loaded, we run our Three.js stuff.
@@ -59,9 +60,9 @@
             webGLRenderer.setSize(window.innerWidth, window.innerHeight);
             webGLRenderer.shadowMapEnabled = true;
             // position and point the camera to the center of the scene
-            camera.position.x = -30;
+            camera.position.x = -10;
             camera.position.y = 50;
-            camera.position.z = 50;
+            camera.position.z = 8000;
             camera.lookAt(new THREE.Vector3(10, -20, 0));
             // add the output of the renderer to the html element
             document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
@@ -94,7 +95,7 @@
             var pMaterial = new THREE.PointsMaterial({
                 color: 0xFFFFFF,
                 size: 20,
-                map: THREE.ImageUtils.loadTexture("https://aerotwist.com/static/tutorials/creating-particles-with-three-js/images/particle.png"),
+                map: THREE.ImageUtils.loadTexture("https://crossorigin.me/http://i.imgur.com/XVgFERU.png"),
                 blending: THREE.AdditiveBlending,
                 transparent: true
             });
@@ -112,17 +113,47 @@
             scene.add(particleSystem);
 
             // black hole initialization
-            var blackHoleGeometry = new THREE.CircleGeometry(100, 32);
+            var blackHoleGeometry = new THREE.SphereGeometry(30, 64, 64);
             var blackHoleMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
             blackHoleMaterial.side = THREE.DoubleSide;
             var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             scene.add(blackHole);
-
-
-
+            CurrentStage = 1;
+            //AUDIO setup for the milky way scene
+            //Create an AudioListener and add it to the camera
+            var listener = new THREE.AudioListener();
+            camera.add(listener);
+            // create a global audio source
+            var sound = new THREE.Audio(listener);
+            var audioLoader = new THREE.AudioLoader();
+            audioLoader.load('https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.5);
+                sound.play();
+                sound.source.onended = function () {
+                    CurrentStage++;
+                    this.isPlaying = false; /* sets Three wrapper property correctly */
+                };
+            });
             function render() {
-                // add some rotation to the system
-                particleSystem.rotation.y += 0.001;
+
+                //start by playing the intro audio
+                if (CurrentStage == 1) {
+                    //Load a sound and set it as the Audio object's buffer
+                    // add some rotation to the system                    
+                    particleSystem.rotation.y += 0.003;
+                }
+                else if (CurrentStage == 2) {
+                    //zoom in
+                    if (camera.position.z > 250) {
+                        camera.position.z = camera.position.z - 50;                        
+                        // camera.fov *= 10;
+                        // camera.updateProjectionMatrix();
+                    }
+                    else {
+                        CurrentStage++;
+                    }
+                }
 
                 // render using requestAnimationFrame
                 requestAnimationFrame(render);
@@ -137,9 +168,7 @@
                     webGLRenderer.render(scene, camera);
                 }
             }
-
             render();
-
         }
         window.onload = init;
     </script>
