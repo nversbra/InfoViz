@@ -7,6 +7,7 @@
     <script type="text/javascript" src="../resources/CSVtoJSONConverter/starsHMY.js"></script>
     <script type="text/javascript" src="../libs/threeJS/three.js"></script>
     <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
+    <link rel="stylesheet" type="text/css" src="slider.css">
 
 
 
@@ -23,6 +24,7 @@
 
 <body>
 
+<div id="zoom"><input id="setZoom" type="range" min="0" max="1" step="0.01" value="0" webkit-appearance="slider-vertical" orient="vertical" onclick="updateZoom(this.value);"></div>
     <div id="Stats-output">
     </div>
     <!-- Div which will hold the Output -->
@@ -33,19 +35,64 @@
     <!-- Javascript code that runs our Three.js examples -->
     <script type="text/javascript">
         // once everything is loaded, we run our Three.js stuff.
-        function init() {
-            //Single or split screen
-            var DualActive = false;
 
-            var aspect = window.innerWidth / window.innerHeight;
+
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+
+
+        var controls;
+
+        var camera, DualCamera1, DualCamera2;
+        var DualActive = false;
+        var Center;
+        var maxDistance = 4200;
+        var minDistance = 60;
+
+        var aspect = window.innerWidth / window.innerHeight;
+
+        var scene, webGLRenderer;
+        var CurrentStage;
+
+
+
+        function updateZoom(val) {
+            var dis = camera.position.distanceTo(Center);
+            var zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
+            if (zoomLevel > val){
+                while(zoomLevel>val){
+                    controls.dollyIn(0.95);
+                    controls.update();
+                    dis = camera.position.distanceTo(Center);
+                    zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
+                }
+            } else {
+                while(zoomLevel<val){
+                    controls.dollyOut(0.95);
+                    controls.update();
+                    dis = camera.position.distanceTo(Center);
+                    zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
+                }
+            }
+        }
+
+
+        function init() {
+
+
+
+            //Single or split screen
+
 
             //load the csv file and parse it
             // create a scene, that will hold all our elements such as objects, cameras and lights.
-            var scene = new THREE.Scene();
+            Center = new THREE.Vector3(10, -20, 0);
+            scene = new THREE.Scene();
             // create a camera, which defines where we're looking at.
-            var camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
-            var DualCamera1 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
-            var DualCamera2 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
+            camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
+            DualCamera1 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
+            DualCamera2 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
             DualCamera1.position.x = 30;
             DualCamera1.position.y = -50;
             DualCamera1.position.z = -50;
@@ -55,7 +102,7 @@
             DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
             DualCamera2.lookAt(new THREE.Vector3(10, -20, 0));
             // create a render and set the size
-            var webGLRenderer = new THREE.WebGLRenderer();
+            webGLRenderer = new THREE.WebGLRenderer();
             //webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
             webGLRenderer.setSize(window.innerWidth, window.innerHeight);
             webGLRenderer.shadowMapEnabled = true;
@@ -68,10 +115,16 @@
             document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
             webGLRenderer.autoClear = false;
             //controls
-            controls = new THREE.OrbitControls(camera);
+            controls = new THREE.OrbitControls(camera, webGLRenderer.domElement);
             controls.rotateSpeed = 1.0;
             controls.zoomSpeed = 1.2;
             controls.panSpeed = 0.8;
+            controls.maxDistance = maxDistance;
+            controls.minDistance = minDistance;
+            controls.update();
+            controls.dollyIn(5);
+            controls.update();
+
             // Helpers
             // create the particle variables
             //var particleCount = 180000,
@@ -105,7 +158,6 @@
                 pMaterial);
 
 
-
             // also update the particle system to
             // sort the particles which enables
             // the behaviour we want
@@ -114,7 +166,7 @@
 
             // black hole initialization
             var blackHoleGeometry = new THREE.SphereGeometry(30, 64, 64);
-            var blackHoleMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            var blackHoleMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
             blackHoleMaterial.side = THREE.DoubleSide;
             var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             scene.add(blackHole);
@@ -132,16 +184,30 @@
                 sound.play();
                 sound.source.onended = function () {
                     CurrentStage++;
-                    this.isPlaying = false; /* sets Three wrapper property correctly */
+                    this.isPlaying = false;
+                    /* sets Three wrapper property correctly */
                 };
             });
+            render()
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            DualCamera2.aspect = (window.innerWidth /2)/ window.innerHeight;
+            DualCamera2.updateProjectionMatrix();
+            webGLRenderer.setSize( window.innerWidth, window.innerHeight );
+        }
             function render() {
 
                 //start by playing the intro audio
                 if (CurrentStage == 1) {
                     //Load a sound and set it as the Audio object's buffer
                     // add some rotation to the system                    
-                    particleSystem.rotation.y += 0.003;
+                    //particleSystem.rotation.y += 0.003;
+                   // console.log(DualCamera1.zoom)
+                    //console.log(DualCamera2.zoom)
+                    //console.log(camera.zoom)
                 }
                 else if (CurrentStage == 2) {
                     //zoom in
@@ -154,22 +220,54 @@
                         CurrentStage++;
                     }
                 }
+                var dis = camera.position.distanceTo(Center);
+                var zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
 
+                function updateZoomSlider(){
+                    document.getElementById("setZoom").value = zoomLevel
+                }
+
+                webGLRenderer.domElement.addEventListener( 'wheel', updateZoomSlider, false );
+
+
+                if (zoomLevel>0.98){
+                    DualActive = true;
+                } else {
+                    DualActive = false;
+                }
+
+                //console.log(document.getElementById("zoom"));
                 // render using requestAnimationFrame
                 requestAnimationFrame(render);
                 if (DualActive) {
+                    camera.aspect = (window.innerWidth / 2)/ window.innerHeight;
+                    camera.updateProjectionMatrix();
                     webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
                     webGLRenderer.render(scene, camera);
                     webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
                     webGLRenderer.render(scene, DualCamera2);
                 } else {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    //console.log(controls.getAzimuthalAngle());
+                    //console.log(controls.getPolarAngle());
+                    //var dis = camera.position.distanceTo(Center);
+                    //var zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
+                    //console.log(camera.position.distanceTo(Center));
+                    //console.log(zoomLevel);
 
+                    //console.log(camera.position.x);
+
+                    //console.log(camera.position.y);
+                    //console.log(camera.position.z);
                     webGLRenderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
                     webGLRenderer.render(scene, camera);
                 }
-            }
-            render();
+
+
         }
+
+
         window.onload = init;
     </script>
 </body>

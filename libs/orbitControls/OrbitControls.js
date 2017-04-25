@@ -379,6 +379,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 
     }
 
+    this.dollyIn=dollyIn;
+    this.dollyOut=dollyOut;
+
     function dollyOut( dollyScale ) {
 
         if ( scope.object instanceof THREE.PerspectiveCamera ) {
