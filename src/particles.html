@@ -54,7 +54,7 @@
 
         var controls;
 
-        var camera, DualCamera1, DualCamera2;
+        var camera, DualCamera1, DualCamera2, cameraHelper, DualCameraHelper;
         var DualActive = false;
         var Center;
         var maxDistance = 4200;
@@ -101,6 +101,7 @@
             scene = new THREE.Scene();
             // create a camera, which defines where we're looking at.
             camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
+
             DualCamera1 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
             DualCamera2 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
             DualCamera1.position.x = 30;
@@ -134,6 +135,11 @@
             controls.update();
             controls.dollyIn(5);
             controls.update();
+
+
+            cameraHelper=  new THREE.CameraViz( camera );
+            DualCameraHelper = new THREE.CameraViz( DualCamera2 );
+            scene.add( cameraHelper );
 
             // Helpers
             // create the particle variables
@@ -250,6 +256,7 @@
                 // render using requestAnimationFrame
                 requestAnimationFrame(render);
                 if (DualActive) {
+                    scene.add(DualCameraHelper);
                     camera.aspect = (window.innerWidth / 2)/ window.innerHeight;
                     camera.updateProjectionMatrix();
                     webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
@@ -257,6 +264,7 @@
                     webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
                     webGLRenderer.render(scene, DualCamera2);
                 } else {
+                    try {scene.remove(DualCameraHelper);} catch (e){}
                     camera.aspect = window.innerWidth / window.innerHeight;
                     camera.updateProjectionMatrix();
                     //console.log(controls.getAzimuthalAngle());
