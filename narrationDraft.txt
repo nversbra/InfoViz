@@ -1,0 +1,47 @@
+***************
+Introduction
+***************
+
+
+Around 250 billion. That is the current estimate of how many stars there are in the Milky Way. You can see a visualization of ... of them now.  Much like us tiny, earthly humans, all these stars were once born, and one day they will die as well. But unlike us humans, the afterlife of some of the stars can be quite spectacular. They can continue their existence in the exotic forms of red giants, brown dwarfs or neutron stars. But the heaviest of them are doomed to end as black holes. 
+
+The birth of a star takes place when a gigantic cloud of interstellar dust collapses under its own gravity. The collapsing matter creates a pressure that ignites a nuclear fusion reaction: the time has come for the star to shine. Depending on its mass, it will continue to do so for millions to billions of years. But in the end, it will run out of elements to burn in its fusion reaction, and once the fuel is gone, the shiny life of the star comes to an end. Because there is no outward pressure from the nuclear reaction anymore, the heaviest stars collapse further under their own weight. They become incredibly massive and dense, and they exert an unimaginable gravitational force on the objects around them. They become black holes. And the very center of the Milky Way contains such a black hole...
+
+***************
+zoom into black hole
+***************
+
+Meet Sagittarius A*, a lump of 4 million times the mass of the Sun. 
+
+Just like a rocket needs a certain speed to be launched and to escape the gravity of the earth, black holes are so dense that the needed speed exceeds the speed of light, which is, in this universe, an impossible thing. Thus even light cannot escape the region near the black hole. Since we can only see things because their light reaches us, we cannot directly see a black hole, nor can we see a whole region around it where the escape speed still exceeds the speed of light. This region is bordered by what is called the horizon: inside it, light cannot escape to reach an outsider, but just outside it, it becomes possible for the light to move away from the black hole towards the eye of an observer standing further away. So here you thus see Sagittarius A*'s horizon. We have not included the light coming from just outside the horizon, but everyone who has seen the movie interstellar might recall the impressive image of the light around a black hole that was shown there. The light is bent in very strange ways, because, as discovered by Einstein through his theory of general relativity, gravity bends the spacetime itself. 
+
+***************
+unfold split screen 
+***************
+
+This has very bizarre and unintuitive consequences. It's called the theory of relativity because, in the presence of strong gravity, different observers really perceive space and time differently. In a while we will explain how this comes about, but let us first visualize what this looks like. 
+The left screen is the view of an observer standing far away from the black hole and looking towards it. We included some objects in the view that tell us how this observer percieves the space and time at the point he's standing: a clock, a sphere, a light source ... . Further towards the black hole we placed a different observer. You can see what she's seeing through the view on the right. She's looking towards the black hole.As you can notice, we gave her the exact same objects.
+
+Now concentrate again on he view on the left, with the observer standing further away. He perceives the objects near the second observer completely different from his own objects, although these objects are exactly the same. The sphere appears to be a rugbyball. The clock runs slower, which means that everything seems to take place in slow motion (although when you would stand there yourself, nothing odd would be noticable). The color of the light has changed to red. This is because the color of light is related to the frequency of the light wave, and the frequency is inversly related with cycles of time; it appears to take much longer to complete a cycle near the black hole, and therefore the frequency is lower and the preceived color is more reddish.  
+
+
+***************
+control split screen 
+***************
+
+You can now approach the other observer to see for yourself how this changes the way you perceive the space and time near the other observer. 
+
+
+***************
+enter explanatory view 
+***************
+
+To see how these effects can arise, we have to envision how gravity curves the space and time around a massive object. It is however not possible to visualize the curvature of a four dimensional spacetime, so we concentrate on an two dimensional surface. Think of it as a slice of space. This is such a slice, and you're an observer standing far away. Without mass, this space is flat, and if someone walks through this space, he will appear to you as having a constant velocity. 
+
+Now we add a massive object such as a star. According to Einsteins theory of relativity this mass bends the spacetime around the object. (Remember that we are here only looking at a two-dimensional space, so we do not visualize the effects in time, and the surrounding 3D space only acts as a way to visualize the curvature of the 2D space, but has no meaning in itself). So when someone walks through the slice of space, the geometry is actually determined by the curved surface. A small distance in a flat space corresponds to a much larger distance in space with an underlying curvature. This difference becomes larger when the walking person is closer to the massive object. 
+
+
+
+
+
+
