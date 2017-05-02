@@ -51,3 +51,14 @@ input[type=range]::-moz-range-thumb {
     cursor: pointer;
 }
 
+
+.verticalLine {
+    background-color: white;
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    transform: transitionX(-50%);
+    top: 0;
+    visibility: hidden;
+    width: 1px;
+}

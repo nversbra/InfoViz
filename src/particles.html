@@ -23,20 +23,24 @@
 </head>
 
 <body>
+
     <div style="height: 100%">
         <div style="width: 100%;height: 100%">
             <div style="float:left; width: 90%">
                 <div id="WebGL-output">
 
                 </div>
+
             </div>
+
             <div style="float:right; height: 100%">
                 <input id="setZoom" type="range" min="0" max="1" step="0.01" value="0" orient="vertical" style="height: 100%" onclick="updateZoom(this.value);"
                 />
             </div>
+
         </div>
         <div style="clear:both"></div>
-
+        <div id ="verticalLine" class="verticalLine"></div>
         <div id="Stats-output">
         </div>
         <!-- Div which will hold the Output -->
@@ -67,7 +71,7 @@
 
         var scene, webGLRenderer;
         var CurrentStage;
-
+        var emittedLight
 
 
         function updateZoom(val) {
@@ -110,9 +114,9 @@
             DualCamera1.position.x = 30;
             DualCamera1.position.y = -50;
             DualCamera1.position.z = -50;
-            DualCamera2.position.x = -30;
+            DualCamera2.position.x = -10;
             DualCamera2.position.y = 50;
-            DualCamera2.position.z = 50;
+            DualCamera2.position.z = 300;
             DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
             DualCamera2.lookAt(new THREE.Vector3(10, -20, 0));
             // create a render and set the size
@@ -145,6 +149,7 @@
             DualCameraHelper = new THREE.CameraViz(DualCamera2);
             scene.add(cameraHelper);
 
+
             // Helpers
             // create the particle variables
             //var particleCount = 180000,
@@ -173,7 +178,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-            loader.load('http://localhost:8080/images/circle.png',
+            //loader.load('http://localhost:8080/images/circle.png',
+            loader.load('../images/circle.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -197,6 +203,7 @@
 
 
 
+
             // black hole initialization
             var blackHoleGeometry = new THREE.SphereGeometry(30, 64, 64);
             var blackHoleMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
@@ -204,7 +211,19 @@
             var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             scene.add(blackHole);
             CurrentStage = 1;
+            emitLight();
             render()
+        }
+
+        function emitLight() {
+            console.log("emitlight called");
+            var dotGeometry = new THREE.Geometry();
+            var pos = Center;
+            pos.z +=30;
+            dotGeometry.vertices.push(pos);
+            var dotMaterial = new THREE.PointsMaterial({size: 20, sizeAttenuation: false, color: "red"});
+            emittedLight = new THREE.Points(dotGeometry, dotMaterial);
+            scene.add(emittedLight);
         }
 
         function onWindowResize() {
@@ -225,28 +244,55 @@
                 document.getElementById("setZoom").value = zoomLevel
             }
 
+            function showVertLine(s) {
+                if(s) {document.getElementById("verticalLine").style.visibility = "visible";}
+                else {document.getElementById("verticalLine").style.visibility = "hidden";}
+            }
+
+
+
             webGLRenderer.domElement.addEventListener('wheel', updateZoomSlider, false);
 
+           ////if (emittedLight!=undefined){
+           //    console.log("There is a light")
+           //    if (emittedLight.position.distanceTo(DualCamera2) > 2) {
+           //        emittedLight.translateOnAxis(DualCamera2.position, 5);
+           //    } else {
+           //        scene.remove(emittedLight);
+           //        emittedLight=null;
+           //    }
+           //}
 
-            if (zoomLevel > 0.98) {
+
+
+
+
+            emittedLight.material.color.set(new THREE.Color(zoomLevel,Math.abs(1-zoomLevel),zoomLevel));
+
+            if (zoomLevel > 0.95) {
                 DualActive = true;
             } else {
                 DualActive = false;
             }
+            showVertLine(DualActive);
 
             //console.log(document.getElementById("zoom"));
             // render using requestAnimationFrame
             requestAnimationFrame(render);
             if (DualActive) {
                 scene.add(DualCameraHelper);
+                scene.add(cameraHelper);
                 camera.aspect = (window.innerWidth / 2) / window.innerHeight;
                 camera.updateProjectionMatrix();
                 webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
                 webGLRenderer.render(scene, camera);
                 webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
+                emittedLight.material.color.set(new THREE.Color(0,1,0));
                 webGLRenderer.render(scene, DualCamera2);
             } else {
-                try { scene.remove(DualCameraHelper); } catch (e) { }
+                try {scene.remove(cameraHelper);
+                    scene.remove(DualCameraHelper);
+                    } catch (e) { }
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 //console.log(controls.getAzimuthalAngle());
