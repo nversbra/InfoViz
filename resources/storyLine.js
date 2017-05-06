@@ -1,11 +1,4 @@
-function showNarrationText(d){
-  console.log(d3.select("#narration"));
-  console.log(d.narration);
-  d3.select("#narration").text(d.narration);
-}
-
-
-var TimeKnots = {
+var StoryLine = {
   draw: function(id, events, options){
     var cfg = {
       width: 600,
@@ -193,17 +186,17 @@ var TimeKnots = {
         .duration(100)
     .style("opacity", 0)})
     .on("click", function(d){
-      showNarrationText(d);
-      });
+      render(d.name);
+    });
 
-    //Adding start and end labels
+    /*//Adding start and end labels
     if(cfg.showLabels != false){
       if(cfg.dateDimension){
         var format = d3.time.format(cfg.labelFormat);
         var startString = format(new Date(minValue));
         var endString = format(new Date(maxValue));
       }else{
-        var format = function(d){return d}; //Should I do something else?
+        var format = function(d){return d}; 
         var startString = "Start";
         var endString = "The End.";
       }
@@ -216,7 +209,7 @@ var TimeKnots = {
          .text(endString).style("font-size", "70%").style("fill", "white")
          .attr("x", function(d){if(cfg.horizontalLayout){return  cfg.width -  d3.max([this.getBBox().width, (margin+this.getBBox().width/2)])} return Math.floor(this.getBBox().width/2)})
          .attr("y", function(d){if(cfg.horizontalLayout){return Math.floor(cfg.height/2+(margin+this.getBBox().height))}return cfg.height-margin+this.getBBox().height/2})
-    }
+    }*/
 
 
     svg.on("mousemove", function(){
