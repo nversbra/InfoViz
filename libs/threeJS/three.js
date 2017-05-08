@@ -40840,16 +40840,16 @@
 
         // cone
 
-        addLine( "p", "n1", colorCone );
-        addLine( "p", "n2", colorCone );
-        addLine( "p", "n3", colorCone );
-        addLine( "p", "n4", colorCone );
+       // addLine( "p", "n1", colorCone );
+       // addLine( "p", "n2", colorCone );
+       // addLine( "p", "n3", colorCone );
+       // addLine( "p", "n4", colorCone );
 
         // up
 
-        addLine( "u1", "u2", colorUp );
-        addLine( "u2", "u3", colorUp );
-        addLine( "u3", "u1", colorUp );
+       // addLine( "u1", "u2", colorUp );
+       // addLine( "u2", "u3", colorUp );
+       // addLine( "u3", "u1", colorUp );
 
 
         function addLine( a, b, color ) {
@@ -40940,16 +40940,16 @@
 
             // near
 
-            setPoint( "n1", - w, - h, - 1 );
-            setPoint( "n2",   w, - h, - 1 );
-            setPoint( "n3", - w,   h, - 1 );
-            setPoint( "n4",   w,   h, - 1 );
+            setPoint( "n1", -w-10, -h-10, - 1 );
+            setPoint( "n2",   w+10, - h-10, - 1 );
+            setPoint( "n3", - w-10,   h+10, - 1 );
+            setPoint( "n4",   w+10,   h+10, - 1 );
 
             // up
 
-            setPoint( "u1",   w * 0.7, h * 1.1, - 1 );
-            setPoint( "u2", - w * 0.7, h * 1.1, - 1 );
-            setPoint( "u3",         0, h * 2,   - 1 )
+           // setPoint( "u1",   w * 0.7, h * 1.1, - 1 );
+           // setPoint( "u2", - w * 0.7, h * 1.1, - 1 );
+           // setPoint( "u3",         0, h * 2,   - 1 )
             geometry.getAttribute( 'position' ).needsUpdate = true;
 
         };

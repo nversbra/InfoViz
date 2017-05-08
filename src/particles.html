@@ -71,7 +71,7 @@
 
         var scene, webGLRenderer;
         var CurrentStage;
-        var emittedLight
+        var emittedLight;
 
 
         function updateZoom(val) {
@@ -116,7 +116,7 @@
             DualCamera1.position.z = -50;
             DualCamera2.position.x = -10;
             DualCamera2.position.y = 50;
-            DualCamera2.position.z = 300;
+            DualCamera2.position.z = 900;
             DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
             DualCamera2.lookAt(new THREE.Vector3(10, -20, 0));
             // create a render and set the size
@@ -178,8 +178,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-            loader.load('http://localhost:8080/images/star2.png',
-            //loader.load('../images/circle.png',
+           // loader.load('http://localhost:8080/images/star2.png',
+            loader.load('../images/star3.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -212,6 +212,7 @@
             scene.add(blackHole);
             CurrentStage = 1;
             emitLight();
+            //requestAnimationFrame(render);
             render()
         }
 
@@ -309,8 +310,6 @@
                 webGLRenderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
                 webGLRenderer.render(scene, camera);
             }
-
-
         }
 
         function narrate() {
