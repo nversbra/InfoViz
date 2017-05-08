@@ -64,7 +64,7 @@
         var Center;
         var maxDistance = 4200;
         var minDistance = 60;
-        var narrationEnabled = false;
+        var narrationEnabled = true;
 
 
         var aspect = window.innerWidth / window.innerHeight;
@@ -178,8 +178,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-            //loader.load('http://localhost:8080/images/circle.png',
-            loader.load('../images/circle.png',
+            loader.load('http://localhost:8080/images/star2.png',
+            //loader.load('../images/circle.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -241,7 +241,7 @@
             var zoomLevel = Math.abs(Math.round(((maxDistance - dis) / (maxDistance - minDistance)) * 100) / 100);
 
             function updateZoomSlider() {
-                document.getElementById("setZoom").value = zoomLevel
+                //document.getElementById("setZoom").value = zoomLevel
             }
 
             function showVertLine(s) {
@@ -395,6 +395,7 @@
                 }
                 else {
                     CurrentStage++;
+                    window.location = "http://www.google.com";
                 }
             }
         }
