@@ -72,7 +72,7 @@
         var scene, webGLRenderer;
         var CurrentStage;
         var emittedLight;
-
+        var zoomLevel;
 
         function updateZoom(val) {
             var dis = camera.position.distanceTo(Center);
@@ -149,6 +149,14 @@
             DualCameraHelper = new THREE.CameraViz(DualCamera2);
             scene.add(cameraHelper);
 
+
+
+            function updateZoomSlider() {
+                console.log("updating zoom");
+                document.getElementById("setZoom").value = zoomLevel
+            }
+
+            webGLRenderer.domElement.addEventListener('wheel', updateZoomSlider, false);
 
             // Helpers
             // create the particle variables
@@ -234,16 +242,18 @@
             DualCamera2.updateProjectionMatrix();
             webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         }
+
+
+
+
         function render() {
             if (narrationEnabled) {
                 narrate();
             }
             var dis = camera.position.distanceTo(Center);
-            var zoomLevel = Math.abs(Math.round(((maxDistance - dis) / (maxDistance - minDistance)) * 100) / 100);
+            zoomLevel = Math.abs(Math.round(((maxDistance - dis) / (maxDistance - minDistance)) * 100) / 100);
 
-            function updateZoomSlider() {
-                //document.getElementById("setZoom").value = zoomLevel
-            }
+
 
             function showVertLine(s) {
                 if(s) {document.getElementById("verticalLine").style.visibility = "visible";}
@@ -252,7 +262,7 @@
 
 
 
-            webGLRenderer.domElement.addEventListener('wheel', updateZoomSlider, false);
+
 
            ////if (emittedLight!=undefined){
            //    console.log("There is a light")
