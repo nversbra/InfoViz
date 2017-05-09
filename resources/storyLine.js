@@ -3,7 +3,7 @@ var StoryLine = {
     var cfg = {
       width: 600,
       height: 200,
-      radius: 10,
+      radius: 15,
       lineWidth: 4,
       color: "white",
       background: "#FFF",
@@ -119,11 +119,12 @@ var StoryLine = {
                       return cfg.color})
     .style("stroke-width", cfg.lineWidth);
 
-    svg.selectAll("circle")
+    svg.selectAll("rect")
     .data(events).enter()
-    .append("circle")
+    .append("rect")
     .attr("class", "timeline-event")
-    .attr("r", function(d){if(d.radius != undefined){return d.radius} return cfg.radius})
+    .attr("width", function(d){if(d.radius != undefined){return d.radius} return cfg.radius})
+    .attr("height", function(d){if(d.radius != undefined){return d.radius} return cfg.radius  })
     .style("stroke", function(d){
                     if(d.color != undefined){
                       return d.color
@@ -139,14 +140,17 @@ var StoryLine = {
     )
     .style("stroke-width", function(d){if(d.lineWidth != undefined){return d.lineWidth} return cfg.lineWidth})
     .style("fill", function(d){if(d.background != undefined){return d.background} return cfg.background})
-    .attr("cy", function(d){
+    .attr("y", function(d){
         if(cfg.horizontalLayout){
-          return Math.floor(cfg.height/2)
+          if (d.radius)
+            return Math.floor(cfg.height/2) - d.radius / 2
+          else 
+            return Math.floor(cfg.height/2) - cfg.radius / 2
         }
         var datum = (cfg.dateDimension)?new Date(d.date).getTime():d.value;
         return Math.floor(step*(datum - minValue) + margin)
     })
-    .attr("cx", function(d){
+    .attr("x", function(d){
         if(cfg.horizontalLayout){
           var datum = (cfg.dateDimension)?new Date(d.date).getTime():d.value;
           var x=  Math.floor(step*(datum - minValue) + margin);
