@@ -7,6 +7,8 @@
     <script type="text/javascript" src="../resources/CSVtoJSONConverter/starsHMY.js"></script>
     <script type="text/javascript" src="../libs/threeJS/three.js"></script>
     <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
+    <script src="../resources/d3.v2.min.js" type="application/javascript"></script>
+    <script src="../resources/storyLine.js" type="application/javascript"></script>
     <link rel="stylesheet" type="text/css" href="slider.css">
 
 
@@ -40,16 +42,29 @@
 
         </div>
         <div style="clear:both"></div>
-        <div id ="verticalLine" class="verticalLine"></div>
+        <div id="verticalLine" class="verticalLine"></div>
         <div id="Stats-output">
         </div>
         <!-- Div which will hold the Output -->
 
     </div>
-
+    <div>
+        <!--<p id="narration"> </p>-->
+        <p onclick="forward()" id="next_round">&#8250;</p>
+        <div id="storyline" style="position:absolute; width:1000px;height: 150px; color: white; left:50%;
+        margin-left:-300px; bottom:0px;"></div>
+    </div>
     <!-- Javascript code that runs our Three.js examples -->
     <script type="text/javascript">
-        // once everything is loaded, we run our Three.js stuff.
+        var storyLineData = [
+            { "value": 1, "name": "Introduction", "radius": "18", img: 'noise-background.jpeg' },
+            { "value": 5, "name": "Zoom into black hole", img: 'noise-background.jpeg' },
+            { "value": 7, "name": "Unfold Split Screen", "radius": "18", img: 'noise-background.jpeg' },
+            { "value": 8, "name": "control split screen", img: 'noise-background.jpeg', color: "#777", background: "#777" }
+        ];
+
+        var narrationPhases = ["initEView", "2D", "flatPath", "addStar", "massInteraction", "collapse", "fadeOut", "compareLength"];
+        StoryLine.draw("#storyline", storyLineData, { dateDimension: false, color: "#FFF", showLabels: true });
 
 
 
@@ -186,8 +201,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-           // loader.load('http://localhost:8080/images/star2.png',
-            loader.load('../images/star3.png',
+            loader.load('http://localhost:8080/images/star2.png',
+                //loader.load('../images/star3.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -228,9 +243,9 @@
             console.log("emitlight called");
             var dotGeometry = new THREE.Geometry();
             var pos = Center;
-            pos.z +=30;
+            pos.z += 30;
             dotGeometry.vertices.push(pos);
-            var dotMaterial = new THREE.PointsMaterial({size: 20, sizeAttenuation: false, color: "red"});
+            var dotMaterial = new THREE.PointsMaterial({ size: 20, sizeAttenuation: false, color: "red" });
             emittedLight = new THREE.Points(dotGeometry, dotMaterial);
             scene.add(emittedLight);
         }
@@ -256,29 +271,29 @@
 
 
             function showVertLine(s) {
-                if(s) {document.getElementById("verticalLine").style.visibility = "visible";}
-                else {document.getElementById("verticalLine").style.visibility = "hidden";}
+                if (s) { document.getElementById("verticalLine").style.visibility = "visible"; }
+                else { document.getElementById("verticalLine").style.visibility = "hidden"; }
             }
 
 
 
 
 
-           ////if (emittedLight!=undefined){
-           //    console.log("There is a light")
-           //    if (emittedLight.position.distanceTo(DualCamera2) > 2) {
-           //        emittedLight.translateOnAxis(DualCamera2.position, 5);
-           //    } else {
-           //        scene.remove(emittedLight);
-           //        emittedLight=null;
-           //    }
-           //}
+            ////if (emittedLight!=undefined){
+            //    console.log("There is a light")
+            //    if (emittedLight.position.distanceTo(DualCamera2) > 2) {
+            //        emittedLight.translateOnAxis(DualCamera2.position, 5);
+            //    } else {
+            //        scene.remove(emittedLight);
+            //        emittedLight=null;
+            //    }
+            //}
 
 
 
 
 
-            emittedLight.material.color.set(new THREE.Color(zoomLevel,Math.abs(1-zoomLevel),zoomLevel));
+            emittedLight.material.color.set(new THREE.Color(zoomLevel, Math.abs(1 - zoomLevel), zoomLevel));
 
             if (zoomLevel > 0.95) {
                 DualActive = true;
@@ -298,12 +313,13 @@
                 webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
                 webGLRenderer.render(scene, camera);
                 webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-                emittedLight.material.color.set(new THREE.Color(0,1,0));
+                emittedLight.material.color.set(new THREE.Color(0, 1, 0));
                 webGLRenderer.render(scene, DualCamera2);
             } else {
-                try {scene.remove(cameraHelper);
+                try {
+                    scene.remove(cameraHelper);
                     scene.remove(DualCameraHelper);
-                    } catch (e) { }
+                } catch (e) { }
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 //console.log(controls.getAzimuthalAngle());
@@ -367,7 +383,7 @@
             // Zoom into the black hole so that the explaining audio can play
             else if (CurrentStage == 3) {
                 //zoom in
-                if (camera.position.z > 150) {
+                if (camera.position.z > 390) {
                     camera.position.z = camera.position.z - 30;
                     // camera.fov *= 10;
                     // camera.updateProjectionMatrix();
@@ -404,7 +420,7 @@
                 }
                 else {
                     CurrentStage++;
-                    window.location = "http://www.google.com";
+                    //window.location = "http://www.google.com";
                 }
             }
         }
