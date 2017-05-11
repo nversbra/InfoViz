@@ -7,8 +7,7 @@
     <script type="text/javascript" src="../resources/CSVtoJSONConverter/starsHMY.js"></script>
     <script type="text/javascript" src="../libs/threeJS/three.js"></script>
     <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
-    <script src="../resources/d3.v2.min.js" type="application/javascript"></script>
-    <script src="../resources/storyLine.js" type="application/javascript"></script>
+
     <link rel="stylesheet" type="text/css" href="slider.css">
 
 
@@ -48,28 +47,15 @@
         <!-- Div which will hold the Output -->
 
     </div>
-    <div>
-        <!--<p id="narration"> </p>-->
-        <p onclick="forward()" id="next_round">&#8250;</p>
-        <div id="storyline" style="position:absolute; width:1000px;height: 150px; color: white; left:50%;
-        margin-left:-300px; bottom:0px;"></div>
-    </div>
+
     <!-- Javascript code that runs our Three.js examples -->
     <script type="text/javascript">
-        var storyLineData = [
-            { "value": 1, "name": "Introduction", "radius": "18", img: 'noise-background.jpeg' },
-            { "value": 5, "name": "Zoom into black hole", img: 'noise-background.jpeg' },
-            { "value": 7, "name": "Unfold Split Screen", "radius": "18", img: 'noise-background.jpeg' },
-            { "value": 8, "name": "control split screen", img: 'noise-background.jpeg', color: "#777", background: "#777" }
-        ];
-
-        var narrationPhases = ["initEView", "2D", "flatPath", "addStar", "massInteraction", "collapse", "fadeOut", "compareLength"];
-        StoryLine.draw("#storyline", storyLineData, { dateDimension: false, color: "#FFF", showLabels: true });
-
-
-
         window.addEventListener('resize', onWindowResize, false);
 
+        var firstScene = "Introduction";
+        var secondScene = "Zoom into black hole";
+        var thirdScene = "Unfold Split Screen";
+        var fourthScene = "control split screen";
 
 
         var controls;
@@ -80,7 +66,7 @@
         var maxDistance = 4200;
         var minDistance = 60;
         var narrationEnabled = true;
-
+        var userJump = false;
 
         var aspect = window.innerWidth / window.innerHeight;
 
@@ -88,6 +74,7 @@
         var CurrentStage;
         var emittedLight;
         var zoomLevel;
+
 
         function updateZoom(val) {
             var dis = camera.position.distanceTo(Center);
@@ -111,8 +98,6 @@
 
 
         function init() {
-
-
 
             //Single or split screen
 
@@ -257,11 +242,69 @@
             DualCamera2.updateProjectionMatrix();
             webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         }
+        var listener, sound, audioLoader;
+        listener = new THREE.AudioListener();
+        sound = new THREE.Audio(listener);
+        audioLoader = new THREE.AudioLoader();
+        //function in charge of updating the animation stage when a user jumps
+        function executeJumpProtocol() {
+            console.log("userJump is %s", userJump)
+            //notify of the user jump 
+            userJump = true;
+            //if a sound is playing, stop it
+            if (sound.isPlaying) {
+
+                sound.stop();
+            }
+        }
+        // This function alters the narrative state and returns true if it did it.
+        function storyLineJump(sceneName) {
+            //The user will only be able to jump back and forth only in certain stages of the animation
+            //we only allow a user to go to the first stage if the stage 3 has been completed
+            if (sceneName === firstScene) {
+                if (CurrentStage !== 3 &&CurrentStage !== 6) {
+                    executeJumpProtocol();
+                }
+                camera.position.x = -10;
+                camera.position.y = 50;
+                camera.position.z = 30000;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
+                CurrentStage = 1;
+                controls.update();
+                return true
+            }
+            else if (sceneName === secondScene) {
+                console.log("jumping back to second scene");
+                if (CurrentStage !== 3 &&CurrentStage !== 6)  {
+                    executeJumpProtocol();
+                }
+                camera.position.x = -0.2799995955564319;
+                camera.position.y = 1.3999979777821712;
+                camera.position.z = 389.99878666929555;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
+                CurrentStage = 4;
+                controls.update();
+
+                return true
+            }
+            else {
+
+                return false;
+            }
+        }
+
+
+        function render(sceneName) {
+
+            if (typeof (sceneName) === "string") {
+                //hannah's library invokes the render method with a parameter which apparently exists as an override in threejs
+                //therefore in case this method was called by clicking it must be ignored so the rendering process isnt overdone.                
+                storyLineJump(sceneName);
+                return null;
+            }
 
 
 
-
-        function render() {
             if (narrationEnabled) {
                 narrate();
             }
@@ -302,7 +345,7 @@
             }
             showVertLine(DualActive);
 
-            //console.log(document.getElementById("zoom"));
+
             // render using requestAnimationFrame
             requestAnimationFrame(render);
             if (DualActive) {
@@ -322,58 +365,57 @@
                 } catch (e) { }
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
-                //console.log(controls.getAzimuthalAngle());
-                //console.log(controls.getPolarAngle());
-                //var dis = camera.position.distanceTo(Center);
-                //var zoomLevel = Math.abs(Math.round(((maxDistance-dis)/(maxDistance-minDistance))*100)/100);
-                //console.log(camera.position.distanceTo(Center));
-                //console.log(zoomLevel);
-
-                //console.log(camera.position.x);
-
-                //console.log(camera.position.y);
-                //console.log(camera.position.z);
                 webGLRenderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
                 webGLRenderer.render(scene, camera);
             }
         }
 
+
         function narrate() {
-            var listener = new THREE.AudioListener();
-            var sound = new THREE.Audio(listener);
-            var audioLoader = new THREE.AudioLoader();
+            //this function 
+            function incStage() {
+                console.log("IncStage called with jump");
+                console.log(userJump);
+                console.log("and currentStage");
+                console.log(CurrentStage);
+                if (!userJump) {
+                    //only increase the stage if the user has not changed the stage
+                    CurrentStage++;
+                }
+                else {
+                    //do nothing and restore the userJump switch
+                    userJump = false;
+                }
+
+
+            }
+
+
+
             //start by playing the intro audio
             if (CurrentStage == 1) {
                 //disable controls rotation and zoom so we guide the user through the milky way
-                // controls.enableRotate = false;
-                // controls.enableZoom = false;
-                //AUDIO setup for the milky way scene
-                //Create an AudioListener and add it to the camera
-
+                controls.enableRotate = false;
+                controls.enableZoom = false;
                 camera.add(listener);
-                // create a global audio source
-
-
+                //restart the object references so that the global reference allows us to stop the sound whenever we want
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
                 audioLoader.load('https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(0.5);
                     sound.play();
                     sound.source.onended = function () {
-                        CurrentStage++;
+                        console.log("onended called")
                         this.isPlaying = false;
-                        /* sets Three wrapper property correctly */
+                        incStage();
                     };
                 });
                 CurrentStage++;
-                //Load a sound and set it as the Audio object's buffer
-                // add some rotation to the system
-
-                // console.log(DualCamera1.zoom)
-                //console.log(DualCamera2.zoom)
-                //console.log(camera.zoom)
 
             }
-            // Rotate the camera while the narrator explain what the milky way is.
+            // Rotate the camera while the narrator explains what the milky way is.
             else if (CurrentStage == 2) {
                 if (particleSystem) {
                     particleSystem.rotation.y += 0.003;
@@ -394,13 +436,17 @@
             }
             // play the audio explaining the black hole
             else if (CurrentStage == 4) {
-
+                console.log(camera);
+                //restart the object references so that the global reference allows us to stop the sound whenever we want
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
                 audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(0.5);
                     sound.play();
                     sound.source.onended = function () {
-                        CurrentStage++;
+                        incStage();
                         this.isPlaying = false;
                         /* sets Three wrapper property correctly */
                     };
@@ -425,8 +471,28 @@
             }
         }
 
-
         window.onload = init;
+    </script>
+    <div>
+        <!--<p id="narration"> </p>-->
+        <p onclick="forward()" id="next_round">&#8250;</p>
+        <div id="storyline" style="position:absolute; width:1000px;height: 150px; color: white; left:50%;
+        margin-left:-300px; bottom:0px;"></div>
+    </div>
+    <script type="text/javascript">
+        var storyLineData = [
+            { "value": 1, "name": firstScene, "radius": "18", img: '../images/noise-background.jpeg' },
+            { "value": 5, "name": secondScene, img: '../images/noise-background.jpeg' },
+            { "value": 7, "name": thirdScene, "radius": "18", img: '../images/noise-background.jpeg' },
+            { "value": 8, "name": fourthScene, img: '../images/ noise-background.jpeg', color: "#777", background: "#777" }
+        ];
+
+        var narrationPhases = ["initEView", "2D", "flatPath", "addStar", "massInteraction", "collapse", "fadeOut", "compareLength"];
+    </script>
+    <script src="../resources/d3.v2.min.js" type="application/javascript"></script>
+    <script src="../resources/storyLine.js" type="application/javascript"></script>
+    <script type="text/javascript">
+        StoryLine.draw("#storyline", storyLineData, { dateDimension: false, color: "#FFF", showLabels: true });
     </script>
 </body>
 
