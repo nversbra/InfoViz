@@ -263,6 +263,7 @@
             //we only allow a user to go to the first stage if the stage 3 has been completed
             if (sceneName === firstScene) {
                 if (CurrentStage !== 3 &&CurrentStage !== 6) {
+                    console.log("executing jump protocol 1");
                     executeJumpProtocol();
                 }
                 camera.position.x = -10;
@@ -274,8 +275,9 @@
                 return true
             }
             else if (sceneName === secondScene) {
-                console.log("jumping back to second scene");
+                
                 if (CurrentStage !== 3 &&CurrentStage !== 6)  {
+                    console.log("executing jump protocol 2");
                     executeJumpProtocol();
                 }
                 camera.position.x = -0.2799995955564319;
@@ -285,6 +287,21 @@
                 CurrentStage = 4;
                 controls.update();
 
+                return true
+            }
+            else if (sceneName === thirdScene) {
+                console.log("The current stage is %s", CurrentStage)
+                if (CurrentStage !== 3 &&CurrentStage !== 6 && CurrentStage !== 7 )  {
+                    console.log("executing jump protocol 3");
+                    executeJumpProtocol();
+                }
+                
+                camera.position.x = -0.2799995955564319;
+                camera.position.y = 1.3999979777821712;
+                camera.position.z = 99.99878666929555;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
+                CurrentStage = 7;
+                controls.update();
                 return true
             }
             else {
@@ -435,8 +452,7 @@
                 }
             }
             // play the audio explaining the black hole
-            else if (CurrentStage == 4) {
-                console.log(camera);
+            else if (CurrentStage == 4) {                
                 //restart the object references so that the global reference allows us to stop the sound whenever we want
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
@@ -468,6 +484,9 @@
                     CurrentStage++;
                     //window.location = "http://www.google.com";
                 }
+            }
+            else if (CurrentStage == 7){
+                
             }
         }
 
