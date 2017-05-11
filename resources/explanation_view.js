@@ -14,8 +14,9 @@ var camMoveDirection = new THREE.Vector3(0,0,0);
 
 var renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth * 0.9 , window.innerHeight * 0.9 );
+renderer.setSize( window.innerWidth  , window.innerHeight  );
 renderer.setClearColor( 0x00000, 0 );
+//renderer.sortObjects = false;
 document.body.appendChild( renderer.domElement );
 
 var orbit = new THREE.OrbitControls( camera, renderer.domElement );
@@ -56,6 +57,7 @@ var forward = function(){
 var SPmesh = new THREE.Object3D();
 var SSmesh = new THREE.Object3D();
 var wireframe; 
+var wireframeBH;
 var radialPlane;
 var nonCurvedPath;
 var curvedPathLeft; 
@@ -63,6 +65,18 @@ var curvedPathRight;
 var captionRadialPlane; 
 var captionWireFrame;
 var horizon; 
+
+var paths = [nonCurvedPath, curvedPathLeft, curvedPathRight];
+var allPathsDefined; //when all paths are defined, they can be clicked (allPathsDefined == true -> on click event listener works)
+var particle;
+var segments = [];
+var segmentGeo = new THREE.BoxGeometry( 1, 1, 0 );
+var segmentSlider; 
+
+var particleMaterial = new THREE.SpriteMaterial( {
+    color: 0xffffff
+    
+} );
 
 var lineMat = new THREE.LineBasicMaterial( {
     color: 0xffffff,
@@ -79,7 +93,15 @@ var pathMat = new THREE.LineBasicMaterial( {
     linewidth: 3
 } );
 
+var segmentMat = new THREE.LineBasicMaterial( {
+    color: 0xD3D3D3,
+    transparent: false,
+    opacity: 1, 
+    polygonOffset: false,
+    linewidth: 3
+} );
 
+var mouse = new THREE.Vector2();
 
 
 
@@ -146,17 +168,18 @@ var initFlatGeometry = function(){
     scene.add(radialPlane);    
 }
 
-/*var initFlatPath = function(){
-    // create the flat path 
-    var lineGeometry = new THREE.Geometry();
-    lineGeometry.vertices.push(
-        new THREE.Vector3( -data.maxRadiusFactor*data.radius, 0, 0 ),
-        new THREE.Vector3( data.maxRadiusFactor*data.radius, 0, 0 )
-    );
-    nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
-    //nonCurvedPath.position.x = data.meshOffset;
-    scene.add(nonCurvedPath);
-}*/
+
+
+var drawSegment = function(position){
+    var segment = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
+    segment.position.copy(position);
+    segment.scale.x = 0.5;
+    segment.scale.y = 0.2;
+    return segment;
+    
+}
+
+
 
 var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments){
     if (segmentIndex < totalNumberOfSegments){
@@ -164,12 +187,19 @@ var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments)
             var lineGeometry = new THREE.Geometry();
             var beginPoint = -totalLength/2;
             var endPoint = beginPoint + totalLength/totalNumberOfSegments * segmentIndex;
-            lineGeometry.vertices.push(
+            /*lineGeometry.vertices.push(
                 new THREE.Vector3( beginPoint, 0, 0 ),
                 new THREE.Vector3( endPoint, 0, 0 ));
             nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
-            scene.add(nonCurvedPath);
+            paths[0] = nonCurvedPath;
+            scene.add(nonCurvedPath);*/
             segmentIndex++;
+
+            var segmentFlat = drawSegment(new THREE.Vector3( endPoint, 0, 0 ));
+            segments.push(segmentFlat);
+            scene.add(segments[segmentIndex-1]);
+            
+
             animateFlatPath(segmentIndex, totalLength, totalNumberOfSegments);
         }, 30);
     };
@@ -215,6 +245,33 @@ var initSphere = function(withTexture){
     scene.add(SPmesh);     
 }
 
+var generateStarPath = function(symmetricPart, material){
+
+    /*var geometry = new THREE.Geometry();
+    var maxIndex = 5 * data.radius;
+    for (i = 0; i < maxIndex ; i++) { 
+        geometry.vertices.push( starPath(i/maxIndex, symmetricPart)); 
+    }
+
+    return new THREE.Line( geometry, material );*/
+
+    console.log("generateStarPath");
+
+    var maxIndex = 5 * data.radius;
+    for (i = 0; i < maxIndex ; i++) { 
+        var segmentCurved = drawSegment(starPath(i/maxIndex, symmetricPart));
+        segmentCurved.position.y -= data.meshOffset;
+        //segmentCurved.scale.x = 5;
+        if (symmetricPart) //right part of the path: climbing
+            segmentCurved.rotation.x = -3.14 / 4;
+        else //left part of the path: ascending
+            segmentCurved.rotation.x = +3.14 / 4;
+        scene.add(segmentCurved);
+    }
+
+    
+}
+
 
 var initWireframe = function(){
 
@@ -224,18 +281,29 @@ var initWireframe = function(){
     wireframe = new THREE.LineSegments( edgesGeo, lineMat );
 
     wireframe.position.y = -data.meshOffset;
+    scene.add( wireframe );
+
+    generateStarPath(true, pathMat); 
+    generateStarPath(false, pathMat);
 
     // create the paths 
-    curvedPathLeft = generateStarPath(true, pathMat); 
+    /*curvedPathLeft = generateStarPath(true, pathMat); 
     curvedPathRight = generateStarPath(false, pathMat);
 
     curvedPathLeft.position.y = -data.meshOffset;
     curvedPathRight.position.y = -data.meshOffset;
 
-    scene.add( wireframe );
-    scene.add( curvedPathLeft );
-    scene.add( curvedPathRight );
+    paths[1] = curvedPathLeft ;
+    paths[2] = curvedPathRight ;*/
+
+    allPathsDefined = true; 
+
+    
+    //scene.add( curvedPathLeft );
+    //scene.add( curvedPathRight );
 }
+
+
 
 
 var initLabelsStarPhase = function(){
@@ -259,19 +327,48 @@ var interaction =  function() {
         SPmesh.material.opacity =  opacity ;
 
         initWireframe();
+    }
 
-        
-
-    //removeMesh(); // adds the meshes that are set to true from the beginning   (otherwise, they are only rendered once the controls are changed)
-}
-
-var folder = gui.addFolder( 'Controls' );
+    var folder = gui.addFolder( 'Controls' );
 
     folder.add(data, 'density', 0, maxDensity).step(0.0001).onChange(updateGeometryDensity);
 
     updateGeometryDensity();
 
 };
+
+
+
+function onDocumentMouseMove( event ) {
+
+    if (allPathsDefined){
+        event.preventDefault();
+        mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+        var raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera( mouse, camera );
+        var intersects = raycaster.intersectObjects( segments );
+        var vector = new THREE.Vector3();
+        vector.set(
+            mouse.x,
+            mouse.y,
+            0 );
+        vector.unproject( camera );
+        if ( intersects.length > 0 ) {
+            //intersects[ 0 ].object.material.color.setHex( 0x000000 );
+            scene.remove(segmentSlider);
+            segmentSlider = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
+            segmentSlider.position.copy(intersects[ 0 ].point);
+            segmentSlider.position.z = 0.001;
+            segmentSlider.scale.x = 5;
+            segmentSlider.scale.y = 1;
+            scene.add(segmentSlider);
+
+        }
+    }
+}
+
+
 
 var collapseSphere = function (){
 
@@ -298,67 +395,62 @@ var animateHorizon = function (opac){
         setTimeout(function(){
             scene.remove(horizon);
             initHorizon(opac);
-            opac += 0.1; 
+            opac += 0.01; 
             animateHorizon(opac);
-        }, 60);
+        }, 30);
 
     }
 
 }
 
-/*var compareLengthInteraction = function(){
-    var vector = new THREE.Vector3();
-    vector.set(
-        ( event.clientX / window.innerWidth ) * 2 - 1,
-        - ( event.clientY / window.innerHeight ) * 2 + 1,
-        0.5 );
+var initWireframeBH = function(){
 
-    vector.unproject( camera );
+    //create the geometry wireframe of the black hole
+    BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
+    var edgesGeo = new THREE.EdgesGeometry(BH, 0.01);
+    wireframeBH = new THREE.LineSegments( edgesGeo, lineMat );
+    wireframeBH.position.y = -data.meshOffset - Math.sqrt(25 * 8 * 2.5);
+    scene.add( wireframeBH );
 
-    var dir = vector.sub( camera.position ).normalize();
+}
 
-    var distance = - camera.position.z / dir.z;
 
-    var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
-
-    console.log(pos);
-
-}*/
 
 
 var narrative = function(narrationPhase){
 
-    if (narrationPhase == "initEView"){
-    }
-    else if (narrationPhase == "2D"){
-        //document.getElementById('narration').innerHTML = "Suppose we have a flat, two-dimensional space. <br> The space is flat because there is no mass.";
-        initFlatGeometry();
-
-    }
-    else if (narrationPhase == "flatPath"){
+    if (narrationPhase == "flatPath"){
        // document.getElementById('narration').innerHTML = "This is a path through the flat space.";
-        animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 100);
-        var finalCameraPosition = new THREE.Vector3(0,4,50);
-        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-        totalNumberOfCamSteps = 400;
-        camStepsIndex=0;
-    }   
-    else if (narrationPhase == "addStar"){
+       initFlatGeometry();
+       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 100);
+       var finalCameraPosition = new THREE.Vector3(0,4,50);
+       camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+       totalNumberOfCamSteps = 400;
+       camStepsIndex=0;
+   }   
+   else if (narrationPhase == "addStar"){
        // document.getElementById('narration').innerHTML = "Now we add a heavy object, such as a star. <br> The presence of the mass curves the 2D space.";
-        initSphere(false);
-        initWireframe();
-        initLabelsStarPhase();
-        type(captionRadialPlane, "This is what you see.", 0);
-        type(captionWireFrame, "This is the underlying structure of space.", 0);
-        var finalCameraPosition = new THREE.Vector3(5,2,60);
-        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-        totalNumberOfCamSteps = 100;
-        camStepsIndex=0;
+       initSphere(false);
+       initWireframe();
+       initLabelsStarPhase();
+       type(captionRadialPlane, "This is what you see.", 0);
+       type(captionWireFrame, "This is the underlying structure of space.", 0);
+       var finalCameraPosition = new THREE.Vector3(5,2,60);
+       camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+       totalNumberOfCamSteps = 100;
+       camStepsIndex=0;
 
-    }
-    else if (narrationPhase == "massInteraction"){
+   }
+   else if (narrationPhase == "massInteraction"){
         //document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
         interaction();
+    }
+    else if (narrationPhase == "compareDistances"){
+        fadeOut(radialPlane);
+        fadeOut(SPmesh);
+        fadeOut(wireframe);
+        compareLengthInteraction();
+
     }
     else if (narrationPhase == "collapse"){
         collapseSphere();
@@ -366,17 +458,20 @@ var narrative = function(narrationPhase){
         fadeOut(curvedPathRight);
         fadeOut(curvedPathLeft);
         animateHorizon(0);
+        fadeOut(wireframe);
+        initWireframeBH();
     }
     else if (narrationPhase == "fadeOut"){
        // document.getElementById('narration').innerHTML = "";
-        fadeOut(radialPlane);
-        fadeOut(wireframe);
-        fadeOut(SPmesh);
+       fadeOut(radialPlane);
 
-    }
-    else if( narrationPhase == "compareLength"){
-        compareLengthInteraction();
-    }
+       fadeOut(SPmesh);
+       
+
+   }
+   else if( narrationPhase == "compareLength"){
+    compareLengthInteraction();
+}
 
 }
 
@@ -390,9 +485,13 @@ var render = function (narrationPhase) {
   }
 
     moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
+    camera.lookAt( scene.position );
     renderer.render( scene, camera );
 
 };
+
+
+document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 
 window.addEventListener( 'resize', function () {
