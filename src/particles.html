@@ -76,7 +76,7 @@
             pointer-events:none;
         }
 
-        }
+
 
     </style>
 </head>
@@ -99,7 +99,9 @@
 
         </div>
         <div style="clear:both"></div>
+        <div id="highlightLeft" class="highlightLeft"></div>
         <div id="verticalLine" class="verticalLine"></div>
+        <div id="highlightRight" class="highlightRight"></div>
         <div id="Stats-output">
         </div>
         <!-- Div which will hold the Output -->
@@ -135,6 +137,7 @@
         var clockText;
         var clockPoint, captionClock1, captionClock2;
         var time1, time2;
+
 
         var createClockLabel = function(parentThreeJSObject, projectionCamera){
             var div = document.createElement('div');
@@ -179,7 +182,7 @@
                     return vector;
                 }
             };
-        }
+        };
 
         var type = function(textLabel, text, textIndex) {
             textLabel.element.innerHTML = text.substr(0, textIndex++);
@@ -189,7 +192,7 @@
                 }, 60);
             }
             //return true;
-        }
+        };
 
         function updateZoom(val) {
             var dis = camera.position.distanceTo(Center);
@@ -215,12 +218,14 @@
         function init() {
 
             //Single or split screen
-
-textpresent = false;
+            highlightLeft = 0;
+            highlightRight = 0;
+            textpresent = false;
             //load the csv file and parse it
             // create a scene, that will hold all our elements such as objects, cameras and lights.
             Center = new THREE.Vector3(10, -20, 0);
             scene = new THREE.Scene();
+            console.log(scene.background);
             // create a camera, which defines where we're looking at.
             camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
 
@@ -450,6 +455,15 @@ textpresent = false;
             }
         }
 
+        function HighlightRight() {
+            document.getElementById("highlightRight").style.visibility = "visible";
+            setTimeout(function() { document.getElementById("highlightRight").style.visibility = "hidden"; }, 500);
+
+        }
+        function HighlightLeft() {
+            document.getElementById("highlightLeft").style.visibility = "visible";
+            setTimeout(function() { document.getElementById("highlightLeft").style.visibility = "hidden"; }, 500);}
+
 
         function render(sceneName) {
 
@@ -484,7 +498,6 @@ textpresent = false;
 
 
 
-
             if (emittedLight != undefined) {
                 emittedLight.material.color.set(new THREE.Color(Math.abs(1 - zoomLevel), 0, zoomLevel));
             }
@@ -506,9 +519,11 @@ textpresent = false;
                 camera.updateProjectionMatrix();
                 webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
                 webGLRenderer.render(scene, camera);
+
                 webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
                 if (emittedLight != undefined) {
                     emittedLight.material.color.set(new THREE.Color(1, 0, 0));}
+
                 webGLRenderer.render(scene, DualCamera2);
             } else {
                 try {
@@ -637,6 +652,7 @@ textpresent = false;
                     emittedLight = undefined;
                     emitClock();
                     updateClock(time1.getHours().toString() + ':' + time1.getMinutes().toString(), time2.getHours().toString() + ':' + time2.getMinutes().toString())
+                    HighlightRight();
                 }
                 function minutestoString(min) {
                     if (min.length<2) {

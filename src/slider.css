@@ -62,3 +62,24 @@ input[type=range]::-moz-range-thumb {
     visibility: hidden;
     width: 1px;
 }
+
+.highlightRight{
+    background-color: white;
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    transform: transitionX(-50%);
+    top: 0;
+    visibility: hidden;
+    width: 50%;
+}
+.highlightLeft{
+    background-color: white;
+    height: 100%;
+    left: 0%;
+    position: absolute;
+    transform: transitionX(-50%);
+    top: 0;
+    visibility: hidden;
+    width: 50%;
+}
