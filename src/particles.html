@@ -661,8 +661,8 @@
                         return min;
                     }
                 }
-                time1 = new Date(time1.getTime()+600);
-                time2 = new Date(time2.getTime()+1200);
+                time1 = new Date(time1.getTime()+300);
+                time2 = new Date(time2.getTime()+600);
                 if (time2.getSeconds() % 50 ==0) {
                     updateClock(time1.getHours().toString() + ':' + minutestoString(time1.getMinutes().toString()), time2.getHours().toString() + ':' + minutestoString(time2.getMinutes().toString()));
                 }
