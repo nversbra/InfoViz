@@ -20,6 +20,64 @@
             margin: 0;
             overflow: hidden;
         }
+        @font-face {
+            font-family: 'inconsolata';
+            src: url('../resources/inconsolata.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin:0;
+            font-family: 'inconsolata';
+            font-size: 15px;
+            line-height: 18px;
+            overflow: hidden;
+        }
+
+        canvas { width: 100%; height: 100% }
+
+        #newWindow {
+            display: block;
+            position: absolute;
+            bottom: 0.3em;
+            left: 0.5em;
+            color: #fff;
+        }
+
+        a {
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+        }
+
+        a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        #narration{
+            color: white;
+            font-size: 15px;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+        }
+        #next_round{
+            color: white;
+            position: relative;
+            top: 150px;
+            left: 250px;
+        }
+
+        .text-label {
+            color: #fff;
+            margin: -5px 0 0 15px;
+            pointer-events:none;
+        }
+
+        }
+
     </style>
 </head>
 
@@ -69,12 +127,69 @@
         var userJump = false;
 
         var aspect = window.innerWidth / window.innerHeight;
-
+        var textpresent;
         var scene, webGLRenderer;
         var CurrentStage;
         var emittedLight;
-        var zoomLevel;
+        var zoomLevel, DualzoomLevel;
+        var clockText;
+        var clockPoint, captionClock1, captionClock2;
+        var time1, time2;
 
+        var createClockLabel = function(parentThreeJSObject, projectionCamera){
+            var div = document.createElement('div');
+            div.className = 'text-label';
+            div.style.position = 'absolute';
+            div.style.width = 100;
+            div.style.height = 100;
+            // this is updated once the scene is rendered
+            div.innerHTML = "";
+            div.style.top = -1000;
+            div.style.left = -1000;
+
+            var _this = this;
+
+            return {
+                element: div,
+                parent: parentThreeJSObject,
+                position: new THREE.Vector3(0,0,0),
+                setHTML: function(html) {
+                    this.element.innerHTML = html;
+                },
+                /*setParent: function(threejsobj) {
+                 this.parent = threejsobj;
+                 },*/
+                updatePosition: function() {
+                    if(parent) {
+                        this.position.copy(this.parent.position);
+
+                    }
+                    var coords2d = this.get2DCoords();
+                    this.element.style.left = (coords2d.x + 20) + 'px';
+                    this.element.style.top = (coords2d.y + 50) + 'px';
+                },
+                get2DCoords: function() {
+                    var vector = this.position.project(projectionCamera);
+                    if (projectionCamera == camera){
+                    vector.x = (vector.x + 1)/2 * window.innerWidth/2;
+                    vector.y = -(vector.y - 1)/2 * window.innerHeight;}
+                    else if (projectionCamera == DualCamera2){
+                        vector.x = window.innerWidth/2 + (vector.x + 1 )/2 * window.innerWidth/2;
+                        vector.y = -(vector.y - 1)/2 * window.innerHeight;}
+                    return vector;
+                }
+            };
+        }
+
+        var type = function(textLabel, text, textIndex) {
+            textLabel.element.innerHTML = text.substr(0, textIndex++);
+            if(textIndex < text.length+1) {
+                setTimeout(function(){
+                    type(textLabel, text, textIndex++);
+                }, 60);
+            }
+            //return true;
+        }
 
         function updateZoom(val) {
             var dis = camera.position.distanceTo(Center);
@@ -101,7 +216,7 @@
 
             //Single or split screen
 
-
+textpresent = false;
             //load the csv file and parse it
             // create a scene, that will hold all our elements such as objects, cameras and lights.
             Center = new THREE.Vector3(10, -20, 0);
@@ -114,7 +229,7 @@
             DualCamera1.position.x = 30;
             DualCamera1.position.y = -50;
             DualCamera1.position.z = -50;
-            DualCamera2.position.x = -10;
+            DualCamera2.position.x = -15;
             DualCamera2.position.y = 50;
             DualCamera2.position.z = 900;
             DualCamera1.lookAt(new THREE.Vector3(10, -20, 0));
@@ -127,7 +242,7 @@
             // position and point the camera to the center of the scene
             camera.position.x = -10;
             camera.position.y = 50;
-            camera.position.z = 30000;
+            camera.position.z = maxDistance;
             camera.lookAt(new THREE.Vector3(10, -20, 0));
             // add the output of the renderer to the html element
             document.getElementById("WebGL-output").appendChild(webGLRenderer.domElement);
@@ -145,6 +260,8 @@
 
 
 
+            DualzoomLevel = Math.abs(Math.round(((maxDistance - DualCamera2.position.distanceTo(Center)) / (maxDistance - minDistance)) * 100) / 100);
+
             cameraHelper = new THREE.CameraViz(camera);
             DualCameraHelper = new THREE.CameraViz(DualCamera2);
             scene.add(cameraHelper);
@@ -152,7 +269,6 @@
 
 
             function updateZoomSlider() {
-                console.log("updating zoom");
                 document.getElementById("setZoom").value = zoomLevel
             }
 
@@ -186,8 +302,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-            loader.load('http://localhost:8080/images/star2.png',
-                //loader.load('../images/star3.png',
+            //loader.load('http://localhost:8080/images/star2.png',
+                loader.load('../images/star3.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -219,7 +335,7 @@
             var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             scene.add(blackHole);
             CurrentStage = 1;
-            emitLight();
+           // emitLight();
             //requestAnimationFrame(render);
             render()
         }
@@ -227,13 +343,37 @@
         function emitLight() {
             console.log("emitlight called");
             var dotGeometry = new THREE.Geometry();
-            var pos = Center;
-            pos.z += 30;
-            dotGeometry.vertices.push(pos);
+            var cpos = Center.clone();
+            cpos.z += 30;
+            dotGeometry.vertices.push(cpos);
             var dotMaterial = new THREE.PointsMaterial({ size: 20, sizeAttenuation: false, color: "red" });
             emittedLight = new THREE.Points(dotGeometry, dotMaterial);
             scene.add(emittedLight);
         }
+
+
+        function emitClock() {
+            console.log("emitted clock");
+            var dotGeometry = new THREE.Geometry();
+            var cpos = Center.clone();
+            cpos.z += 30;
+            cpos.y += 30;
+            dotGeometry.vertices.push(cpos);
+            var dotMaterial = new THREE.PointsMaterial({ size: 0, sizeAttenuation: false });
+            clockPoint = new THREE.Points(dotGeometry, dotMaterial);
+            scene.add(clockPoint);
+            captionClock1 = createClockLabel(clockPoint, camera);
+            captionClock2 = createClockLabel(clockPoint, DualCamera2);
+            document.getElementById("WebGL-output").appendChild(captionClock1.element);
+            document.getElementById("WebGL-output").appendChild(captionClock2.element);
+        }
+        function updateClock(time1,time2) {
+            type(captionClock1, time1, 0);
+            type(captionClock2, time2, 0);
+            captionClock1.updatePosition();
+            captionClock2.updatePosition();
+        }
+
 
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -339,28 +479,22 @@
 
 
 
-            ////if (emittedLight!=undefined){
-            //    console.log("There is a light")
-            //    if (emittedLight.position.distanceTo(DualCamera2) > 2) {
-            //        emittedLight.translateOnAxis(DualCamera2.position, 5);
-            //    } else {
-            //        scene.remove(emittedLight);
-            //        emittedLight=null;
-            //    }
-            //}
 
 
 
 
 
-            emittedLight.material.color.set(new THREE.Color(zoomLevel, Math.abs(1 - zoomLevel), zoomLevel));
 
+            if (emittedLight != undefined) {
+                emittedLight.material.color.set(new THREE.Color(Math.abs(1 - zoomLevel), 0, zoomLevel));
+            }
             if (zoomLevel > 0.95) {
                 DualActive = true;
             } else {
                 DualActive = false;
             }
             showVertLine(DualActive);
+
 
 
             // render using requestAnimationFrame
@@ -373,7 +507,8 @@
                 webGLRenderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
                 webGLRenderer.render(scene, camera);
                 webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-                emittedLight.material.color.set(new THREE.Color(0, 1, 0));
+                if (emittedLight != undefined) {
+                    emittedLight.material.color.set(new THREE.Color(1, 0, 0));}
                 webGLRenderer.render(scene, DualCamera2);
             } else {
                 try {
@@ -457,7 +592,8 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                //audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(0.5);
                     sound.play();
@@ -486,8 +622,37 @@
                 }
             }
             else if (CurrentStage == 7){
-                
+                if (emittedLight == undefined){
+                emitLight();}
+                controls.enableRotate = true;
+                controls.enableZoom = true;
+                CurrentStage++;
             }
+
+            else if (CurrentStage == 8) {
+                if (captionClock1 == undefined) {
+                    time1 =  new Date();
+                    time2 = new Date();
+                    scene.remove(emittedLight);
+                    emittedLight = undefined;
+                    emitClock();
+                    updateClock(time1.getHours().toString() + ':' + time1.getMinutes().toString(), time2.getHours().toString() + ':' + time2.getMinutes().toString())
+                }
+                function minutestoString(min) {
+                    if (min.length<2) {
+                        return '0'+min;
+                    } else {
+                        return min;
+                    }
+                }
+                time1 = new Date(time1.getTime()+600);
+                time2 = new Date(time2.getTime()+1200);
+                if (time2.getSeconds() % 50 ==0) {
+                    updateClock(time1.getHours().toString() + ':' + minutestoString(time1.getMinutes().toString()), time2.getHours().toString() + ':' + minutestoString(time2.getMinutes().toString()));
+                }
+            }
+
+
         }
 
         window.onload = init;
@@ -503,7 +668,7 @@
             { "value": 1, "name": firstScene, "radius": "18", img: '../images/noise-background.jpeg' },
             { "value": 5, "name": secondScene, img: '../images/noise-background.jpeg' },
             { "value": 7, "name": thirdScene, "radius": "18", img: '../images/noise-background.jpeg' },
-            { "value": 8, "name": fourthScene, img: '../images/ noise-background.jpeg', color: "#777", background: "#777" }
+            { "value": 8, "name": fourthScene, img: '../images/noise-background.jpeg', color: "#777", background: "#777" }
         ];
 
         var narrationPhases = ["initEView", "2D", "flatPath", "addStar", "massInteraction", "collapse", "fadeOut", "compareLength"];
