@@ -15,11 +15,12 @@
 
 
     <style>
-        body {
+    body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
             margin: 0;
             overflow: hidden;
         }
+
         @font-face {
             font-family: 'inconsolata';
             src: url('../resources/inconsolata.woff') format('woff');
@@ -28,14 +29,17 @@
         }
 
         body {
-            margin:0;
+            margin: 0;
             font-family: 'inconsolata';
             font-size: 15px;
             line-height: 18px;
             overflow: hidden;
         }
 
-        canvas { width: 100%; height: 100% }
+        canvas {
+            width: 100%;
+            height: 100%
+        }
 
         #newWindow {
             display: block;
@@ -56,14 +60,15 @@
             color: black;
         }
 
-        #narration{
+        #narration {
             color: white;
             font-size: 15px;
             position: absolute;
             left: 100px;
             top: 100px;
         }
-        #next_round{
+
+        #next_round {
             color: white;
             position: relative;
             top: 150px;
@@ -73,7 +78,7 @@
         .text-label {
             color: #fff;
             margin: -5px 0 0 15px;
-            pointer-events:none;
+            pointer-events: none;
         }
 
 
@@ -137,6 +142,7 @@
         var clockText;
         var clockPoint, captionClock1, captionClock2;
         var time1, time2;
+        var audioPlaying;
 
 
         var createClockLabel = function(parentThreeJSObject, projectionCamera){
@@ -155,15 +161,15 @@
             return {
                 element: div,
                 parent: parentThreeJSObject,
-                position: new THREE.Vector3(0,0,0),
-                setHTML: function(html) {
+                position: new THREE.Vector3(0, 0, 0),
+                setHTML: function (html) {
                     this.element.innerHTML = html;
                 },
                 /*setParent: function(threejsobj) {
                  this.parent = threejsobj;
                  },*/
-                updatePosition: function() {
-                    if(parent) {
+                updatePosition: function () {
+                    if (parent) {
                         this.position.copy(this.parent.position);
 
                     }
@@ -171,23 +177,25 @@
                     this.element.style.left = (coords2d.x + 20) + 'px';
                     this.element.style.top = (coords2d.y + 50) + 'px';
                 },
-                get2DCoords: function() {
+                get2DCoords: function () {
                     var vector = this.position.project(projectionCamera);
-                    if (projectionCamera == camera){
-                    vector.x = (vector.x + 1)/2 * window.innerWidth/2;
-                    vector.y = -(vector.y - 1)/2 * window.innerHeight;}
-                    else if (projectionCamera == DualCamera2){
-                        vector.x = window.innerWidth/2 + (vector.x + 1 )/2 * window.innerWidth/2;
-                        vector.y = -(vector.y - 1)/2 * window.innerHeight;}
+                    if (projectionCamera == camera) {
+                        vector.x = (vector.x + 1) / 2 * window.innerWidth / 2;
+                        vector.y = -(vector.y - 1) / 2 * window.innerHeight;
+                    }
+                    else if (projectionCamera == DualCamera2) {
+                        vector.x = window.innerWidth / 2 + (vector.x + 1) / 2 * window.innerWidth / 2;
+                        vector.y = -(vector.y - 1) / 2 * window.innerHeight;
+                    }
                     return vector;
                 }
             };
         };
 
-        var type = function(textLabel, text, textIndex) {
+        var type = function (textLabel, text, textIndex) {
             textLabel.element.innerHTML = text.substr(0, textIndex++);
-            if(textIndex < text.length+1) {
-                setTimeout(function(){
+            if (textIndex < text.length + 1) {
+                setTimeout(function () {
                     type(textLabel, text, textIndex++);
                 }, 60);
             }
@@ -221,6 +229,8 @@
             highlightLeft = 0;
             highlightRight = 0;
             textpresent = false;
+            audioPlaying = false;
+            
             //load the csv file and parse it
             // create a scene, that will hold all our elements such as objects, cameras and lights.
             Center = new THREE.Vector3(10, -20, 0);
@@ -307,8 +317,8 @@
             //allow cross origin loading
             loader.crossOrigin = '';
             // load a resource
-            //loader.load('http://localhost:8080/images/star2.png',
-                loader.load('../images/star3.png',
+            loader.load('http://localhost:8080/images/star3.png',
+                // loader.load('../images/star3.png',
                 // Function when resource is loaded
                 function (texture) {
                     var pMaterial = new THREE.PointsMaterial({
@@ -340,7 +350,7 @@
             var blackHole = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
             scene.add(blackHole);
             CurrentStage = 1;
-           // emitLight();
+            // emitLight();
             //requestAnimationFrame(render);
             render()
         }
@@ -372,7 +382,7 @@
             document.getElementById("WebGL-output").appendChild(captionClock1.element);
             document.getElementById("WebGL-output").appendChild(captionClock2.element);
         }
-        function updateClock(time1,time2) {
+        function updateClock(time1, time2) {
             type(captionClock1, time1, 0);
             type(captionClock2, time2, 0);
             captionClock1.updatePosition();
@@ -395,22 +405,28 @@
         function executeJumpProtocol() {
             console.log("userJump is %s", userJump)
             //notify of the user jump 
-            userJump = true;
-            //if a sound is playing, stop it
-            if (sound.isPlaying) {
 
+            //if a sound is playing, stop it
+            if (audioPlaying) {
+                userJump = true;
                 sound.stop();
             }
+            if (CurrentStage > 7) {
+                try { 
+                    updateClock('', ''); 
+                    } 
+                    catch (e) { }
+            }
+
         }
         // This function alters the narrative state and returns true if it did it.
         function storyLineJump(sceneName) {
             //The user will only be able to jump back and forth only in certain stages of the animation
             //we only allow a user to go to the first stage if the stage 3 has been completed
             if (sceneName === firstScene) {
-                if (CurrentStage !== 3 &&CurrentStage !== 6) {
-                    console.log("executing jump protocol 1");
-                    executeJumpProtocol();
-                }
+
+                executeJumpProtocol();
+
                 camera.position.x = -10;
                 camera.position.y = 50;
                 camera.position.z = 30000;
@@ -420,11 +436,9 @@
                 return true
             }
             else if (sceneName === secondScene) {
-                
-                if (CurrentStage !== 3 &&CurrentStage !== 6)  {
-                    console.log("executing jump protocol 2");
-                    executeJumpProtocol();
-                }
+
+
+                executeJumpProtocol();
                 camera.position.x = -0.2799995955564319;
                 camera.position.y = 1.3999979777821712;
                 camera.position.z = 389.99878666929555;
@@ -435,12 +449,11 @@
                 return true
             }
             else if (sceneName === thirdScene) {
-                console.log("The current stage is %s", CurrentStage)
-                if (CurrentStage !== 3 &&CurrentStage !== 6 && CurrentStage !== 7 )  {
-                    console.log("executing jump protocol 3");
-                    executeJumpProtocol();
-                }
-                
+
+
+                executeJumpProtocol();
+
+
                 camera.position.x = -0.2799995955564319;
                 camera.position.y = 1.3999979777821712;
                 camera.position.z = 99.99878666929555;
@@ -541,10 +554,6 @@
         function narrate() {
             //this function 
             function incStage() {
-                console.log("IncStage called with jump");
-                console.log(userJump);
-                console.log("and currentStage");
-                console.log(CurrentStage);
                 if (!userJump) {
                     //only increase the stage if the user has not changed the stage
                     CurrentStage++;
@@ -579,6 +588,7 @@
                         incStage();
                     };
                 });
+                audioPlaying = true;
                 CurrentStage++;
 
             }
@@ -591,6 +601,7 @@
             }
             // Zoom into the black hole so that the explaining audio can play
             else if (CurrentStage == 3) {
+                audioPlaying = false;
                 //zoom in
                 if (camera.position.z > 390) {
                     camera.position.z = camera.position.z - 30;
@@ -602,13 +613,13 @@
                 }
             }
             // play the audio explaining the black hole
-            else if (CurrentStage == 4) {                
+            else if (CurrentStage == 4) {
                 //restart the object references so that the global reference allows us to stop the sound whenever we want
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                //audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
-                    audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(0.5);
                     sound.play();
@@ -618,6 +629,7 @@
                         /* sets Three wrapper property correctly */
                     };
                 });
+                audioPlaying = true;
                 CurrentStage++;
             }
             //rotate the camera while a black hole is explained
@@ -626,6 +638,7 @@
             }
             // once the audio explaining a blackholes is done, zoom in to activate the next view
             else if (CurrentStage == 6) {
+                audioPlaying = false;
                 if (camera.position.z > 100) {
                     camera.position.z = camera.position.z - 1;
                     // camera.fov *= 10;
@@ -636,17 +649,20 @@
                     //window.location = "http://www.google.com";
                 }
             }
-            else if (CurrentStage == 7){
-                if (emittedLight == undefined){
-                emitLight();}
+            else if (CurrentStage == 7) {
+                audioPlaying = false;
+                if (emittedLight == undefined) {
+                    emitLight();
+                }
                 controls.enableRotate = true;
                 controls.enableZoom = true;
                 CurrentStage++;
             }
 
             else if (CurrentStage == 8) {
+                audioPlaying = false;
                 if (captionClock1 == undefined) {
-                    time1 =  new Date();
+                    time1 = new Date();
                     time2 = new Date();
                     scene.remove(emittedLight);
                     emittedLight = undefined;
@@ -655,8 +671,8 @@
                     HighlightRight();
                 }
                 function minutestoString(min) {
-                    if (min.length<2) {
-                        return '0'+min;
+                    if (min.length < 2) {
+                        return '0' + min;
                     } else {
                         return min;
                     }
