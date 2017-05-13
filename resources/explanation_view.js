@@ -1,4 +1,4 @@
-var gui = new dat.GUI();
+var gui;
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 3000);
 
@@ -14,9 +14,8 @@ var camMoveDirection = new THREE.Vector3(0,0,0);
 
 var renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth  , window.innerHeight  );
+renderer.setSize( window.innerWidth   , window.innerHeight  );
 renderer.setClearColor( 0x00000, 0 );
-//renderer.sortObjects = false;
 document.body.appendChild( renderer.domElement );
 
 var orbit = new THREE.OrbitControls( camera, renderer.domElement );
@@ -24,7 +23,9 @@ orbit.enabled = true;
 
 var textLabels = []; 
 
-var maxDensity = 0.004; 
+var maxMass = 1.5; 
+var Rs = 2 * maxMass; // Schwarschild radius (stars with radius < Rs are black holes)
+
 
 var data = {
     slices : 50,
@@ -37,46 +38,46 @@ var data = {
     thetaLength : 6.3, 
     sphereRadius : 5,
     radius : 5,
-    offsetY : 0,
-    meshOffset : 5,
+    mass: 0.2,
+    offsetY : 2,
+    meshOffset : 1,
     maxRadiusFactor : 5,
-    density : 0.001
+    segmentWidth : 1, 
+    segmentHeight : 0.15, 
+    lightStar : true,
+    lightMass : 0.2, 
+    heavyStar : false, 
+    heavyMass : 0.8,
+    superHeavyStar : false, 
+    superHeavyMass : maxMass,
+    starMass : 1 //categorical variable
 };
-
-
-
-
-// 
-var forward = function(){
-    narrationIndex += 1;
-    narrationPhase = narrationPhases[narrationIndex];
-    needsUpdate = true;
-}
 
 
 var SPmesh = new THREE.Object3D();
 var SSmesh = new THREE.Object3D();
-var wireframe; 
+var wireframeLight;
+var wireframeHeavy; 
+var wireframeSuperHeavy 
 var wireframeBH;
 var radialPlane;
-var nonCurvedPath;
+/*var nonCurvedPath;
 var curvedPathLeft; 
-var curvedPathRight; 
+var curvedPathRight; */
 var captionRadialPlane; 
 var captionWireFrame;
 var horizon; 
 
-var paths = [nonCurvedPath, curvedPathLeft, curvedPathRight];
+//var paths = [nonCurvedPath, curvedPathLeft, curvedPathRight];
 var allPathsDefined; //when all paths are defined, they can be clicked (allPathsDefined == true -> on click event listener works)
-var particle;
-var segments = [];
-var segmentGeo = new THREE.BoxGeometry( 1, 1, 0 );
-var segmentSlider; 
 
-var particleMaterial = new THREE.SpriteMaterial( {
-    color: 0xffffff
-    
-} );
+var segmentGeo = new THREE.BoxGeometry( 1, 1, 0 );
+var segmentsFlat = [];
+var segmentsLight = [];
+var segmentsHeavy = [];
+var segmentsSuperHeavy = [];
+var segmentSlider; 
+var mouse = new THREE.Vector2();
 
 var lineMat = new THREE.LineBasicMaterial( {
     color: 0xffffff,
@@ -101,8 +102,17 @@ var segmentMat = new THREE.LineBasicMaterial( {
     linewidth: 3
 } );
 
-var mouse = new THREE.Vector2();
 
+
+/****************************
+**** general functions ******
+****************************/
+
+var forward = function(){
+    narrationIndex += 1;
+    narrationPhase = narrationPhases[narrationIndex];
+    needsUpdate = true;
+}
 
 
 var createLabel = function(parentThreeJSObject){
@@ -156,54 +166,14 @@ var type = function(textLabel, text, textIndex) {
     //return true; 
 }
 
-var initFlatGeometry = function(){
-
-    var planeMaterial = new THREE.MeshPhongMaterial( {color: 0xD3D3D3, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('../images/starry_sky.png')} );
-    var RF = new THREE.CircleGeometry( data.maxRadiusFactor * data.radius, 100 );
-    radialPlane = new THREE.Mesh( RF, planeMaterial );
-    radialPlane.position.y = data.offsetY;
-    radialPlane.rotation.x = Math.PI / 2; //+ Math.PI / 10 ;
-    //radialPlane.position.x = data.meshOffset;
-
-    scene.add(radialPlane);    
-}
-
-
-
-var drawSegment = function(position){
+var drawSegment = function(position, scalingX){
     var segment = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
     segment.position.copy(position);
-    segment.scale.x = 0.5;
-    segment.scale.y = 0.2;
-    return segment;
-    
+    segment.scale.x = data.segmentWidth * scalingX;
+    segment.scale.y = data.segmentHeight;
+    return segment; 
 }
 
-
-
-var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments){
-    if (segmentIndex < totalNumberOfSegments){
-        setTimeout(function(){
-            var lineGeometry = new THREE.Geometry();
-            var beginPoint = -totalLength/2;
-            var endPoint = beginPoint + totalLength/totalNumberOfSegments * segmentIndex;
-            /*lineGeometry.vertices.push(
-                new THREE.Vector3( beginPoint, 0, 0 ),
-                new THREE.Vector3( endPoint, 0, 0 ));
-            nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
-            paths[0] = nonCurvedPath;
-            scene.add(nonCurvedPath);*/
-            segmentIndex++;
-
-            var segmentFlat = drawSegment(new THREE.Vector3( endPoint, 0, 0 ));
-            segments.push(segmentFlat);
-            scene.add(segments[segmentIndex-1]);
-            
-
-            animateFlatPath(segmentIndex, totalLength, totalNumberOfSegments);
-        }, 30);
-    };
-}
 
 var moveCamera = function(){
     if (camStepsIndex < totalNumberOfCamSteps){
@@ -227,80 +197,157 @@ var fadeOut = function(ThreeJSObject){
 }
 
 
+
+
+
+/****************************
+**** narrative functions ******
+****************************/
+
+
+
+var initFlatGeometry = function(){
+
+    var planeMaterial = new THREE.MeshPhongMaterial( {color: 0x000000, side: THREE.DoubleSide} );
+    var RF = new THREE.CircleGeometry( data.maxRadiusFactor * data.radius, 100 );
+    radialPlane = new THREE.Mesh( RF, planeMaterial );
+    radialPlane.position.y = data.offsetY;
+    radialPlane.rotation.x = Math.PI / 2; //+ Math.PI / 10 ;
+    //radialPlane.position.x = data.meshOffset;
+
+    scene.add(radialPlane);    
+}
+
+
+var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments){
+    if (segmentIndex < totalNumberOfSegments){
+        setTimeout(function(){
+            var lineGeometry = new THREE.Geometry();
+            var beginPoint = -totalLength/2;
+            var endPoint = beginPoint + totalLength/totalNumberOfSegments * segmentIndex;
+            /*lineGeometry.vertices.push(
+                new THREE.Vector3( beginPoint, 0, 0 ),
+                new THREE.Vector3( endPoint, 0, 0 ));
+            nonCurvedPath = new THREE.Line( lineGeometry, pathMat );
+            paths[0] = nonCurvedPath;
+            scene.add(nonCurvedPath);*/
+            segmentIndex++;
+
+            var segmentFlat = drawSegment(new THREE.Vector3( endPoint, data.offsetY, 0 ), 1);
+            segmentsFlat.push(segmentFlat);
+            scene.add(segmentsFlat[segmentIndex-1]);
+            animateFlatPath(segmentIndex, totalLength, totalNumberOfSegments);
+        }, 30);
+    };
+}
+
+
 var initSphere = function(withTexture){
 
     //create the sphere 
     SP = new THREE.SphereGeometry(data.sphereRadius, data.slices, data.stacks, data.phiStart, data.phiLength, data.thetaStart, data.thetaLength);
     var SPMaterial;
     if (withTexture){
-        SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : true, opacity: 0, map: THREE.ImageUtils.loadTexture('../images/star-surface.jpg')});
+        SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : false, opacity: 0.2, map: THREE.ImageUtils.loadTexture('../images/star-surface.jpg')});
     }
     else{
         SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : true, opacity: 0});   
     }
 
     SPmesh = new THREE.Mesh( SP, SPmaterial );
-    var opacity = data.density / maxDensity + 0.6;
+    var opacity = data.mass / maxMass + 0.6;
     SPmesh.material.opacity =  opacity ;
+    SPmesh.position.y = data.offsetY;
     scene.add(SPmesh);     
 }
 
-var generateStarPath = function(symmetricPart, material){
+var generateStarPath = function(symmetricPart, material, segmentsArray){
 
-    /*var geometry = new THREE.Geometry();
-    var maxIndex = 5 * data.radius;
-    for (i = 0; i < maxIndex ; i++) { 
-        geometry.vertices.push( starPath(i/maxIndex, symmetricPart)); 
-    }
-
-    return new THREE.Line( geometry, material );*/
-
-    console.log("generateStarPath");
 
     var maxIndex = 5 * data.radius;
-    for (i = 0; i < maxIndex ; i++) { 
-        var segmentCurved = drawSegment(starPath(i/maxIndex, symmetricPart));
+    for (i = 0; i < maxIndex  ; i++) { 
+        var j = i; 
+        if (symmetricPart)
+             j = maxIndex - i; 
+
+        var currentI = j/maxIndex;
+        var currentR = j;
+        var metricScaling; 
+        if (Math.abs(currentR)  >  Math.abs(data.sphereRadius)){
+            metricScaling = 1 / Math.sqrt( (1 - (2 * data.mass / currentR)) );
+        }
+        else if (currentR ==0){
+            metricScaling = 1;
+        }
+        else {
+            var insideMass =  data.mass * Math.pow(currentR/data.sphereRadius,3);
+            metricScaling = 1 / Math.sqrt( (1 - (2 * insideMass / currentR)) );
+        }
+        var segmentCurved = drawSegment(starPath(currentI, symmetricPart), metricScaling);
         segmentCurved.position.y -= data.meshOffset;
-        //segmentCurved.scale.x = 5;
+
         if (symmetricPart) //right part of the path: climbing
-            segmentCurved.rotation.x = -3.14 / 4;
+            segmentCurved.rotation.z = +Math.asin(1/metricScaling) + 1.5 * Math.PI ;
         else //left part of the path: ascending
-            segmentCurved.rotation.x = +3.14 / 4;
-        scene.add(segmentCurved);
+            segmentCurved.rotation.z = -Math.asin(1/metricScaling) - 1.5 * Math.PI ;
+
+        segmentsArray.push(segmentCurved);
+
+        var actualIndex;
+
+        if(!symmetricPart)
+            actualIndex = i +  maxIndex; 
+        else 
+            actualIndex = i;
+        
+        scene.add(segmentsArray[actualIndex]);
     }
 
-    
+
 }
 
 
-var initWireframe = function(){
+var initWireframe = function(wireframe){
 
     //create the geometry wireframe
-    SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
+    var SS = new THREE.ParametricGeometry( staticStar, data.slices, data.stacks );
     var edgesGeo = new THREE.EdgesGeometry(SS, 0.01);
-    wireframe = new THREE.LineSegments( edgesGeo, lineMat );
 
-    wireframe.position.y = -data.meshOffset;
-    scene.add( wireframe );
+    if (wireframe == "light"){
+        wireframeLight = new THREE.LineSegments( edgesGeo, lineMat );
+        wireframeLight.position.y = -data.meshOffset;   
+        scene.add( wireframeLight );
+    }
 
-    generateStarPath(true, pathMat); 
-    generateStarPath(false, pathMat);
+    if (wireframe == "heavy"){
+        wireframeHeavy = new THREE.LineSegments( edgesGeo, lineMat );
+        wireframeHeavy.position.y = -data.meshOffset;   
+        scene.add( wireframeHeavy );
+    }
 
-    // create the paths 
-    /*curvedPathLeft = generateStarPath(true, pathMat); 
-    curvedPathRight = generateStarPath(false, pathMat);
+    if (wireframe == "superHeavy"){
+        wireframeSuperHeavy = new THREE.LineSegments( edgesGeo, lineMat );
+        wireframeSuperHeavy.position.y = -data.meshOffset;   
+        scene.add( wireframeSuperHeavy );
+    }
 
-    curvedPathLeft.position.y = -data.meshOffset;
-    curvedPathRight.position.y = -data.meshOffset;
 
-    paths[1] = curvedPathLeft ;
-    paths[2] = curvedPathRight ;*/
+}
+
+var createCurvedPaths = function(segmentsArray) {
+
+    generateStarPath(true, pathMat, segmentsArray); // left path
+    generateStarPath(false, pathMat, segmentsArray); // right path
 
     allPathsDefined = true; 
 
-    
-    //scene.add( curvedPathLeft );
-    //scene.add( curvedPathRight );
+}
+
+var removeCurvedPaths = function(segmentsArray){
+    for (i = 0; i < segmentsArray.length; i++){
+        scene.remove(segmentsArray[i]);
+    }
+    segmentsArray = [];
 }
 
 
@@ -317,23 +364,109 @@ var initLabelsStarPhase = function(){
 }
 
 
-var interaction =  function() {
+var massInteraction =  function(narrationPhase) {
 
-    function updateGeometryDensity() {
-        scene.remove(wireframe);
-        scene.remove(curvedPathLeft);
-        scene.remove(curvedPathRight);
-        var opacity = data.density / maxDensity + 0.6;
-        SPmesh.material.opacity =  opacity ;
+    function updatePaths() {
+        scene.remove(wireframeHeavy);
+        scene.remove(wireframeLight);
+        scene.remove(wireframeSuperHeavy);
 
-        initWireframe();
+        if (data.lightStar){
+            data.mass = data.lightMass;
+            createCurvedPaths(segmentsLight);
+        }
+        else{
+            removeCurvedPaths(segmentsLight);
+        }
+            
+
+        if (data.heavyStar){
+            data.mass = data.heavyMass;
+            createCurvedPaths(segmentsHeavy);
+        }
+        else{
+            removeCurvedPaths(segmentsHeavy);
+        }
+            
+
+        if (data.superHeavyStar){
+            data.mass = data.superHeavyMass;
+            createCurvedPaths(segmentsSuperHeavy);
+        }
+        else{
+            removeCurvedPaths(segmentsSuperHeavy);
+        }
+            
+
+        /*var opacity = data.mass / maxMass + 0.2;
+        SPmesh.material.opacity =  opacity ; */
+        
     }
 
-    var folder = gui.addFolder( 'Controls' );
+    function updatePathsAndWireframes(){
 
-    folder.add(data, 'density', 0, maxDensity).step(0.0001).onChange(updateGeometryDensity);
 
-    updateGeometryDensity();
+        if (data.starMass == 1){
+            data.lightStar = true;  
+            data.heavyStar = false;  
+            data.superHeavyStar = false;  
+        } 
+        else if (data.starMass == 2){
+            data.lightStar = false;  
+            data.heavyStar = true; 
+            data.superHeavyStar = false;  
+        }   
+        else if (data.starMass == 3){
+            data.lightStar = false;  
+            data.heavyStar = false;  
+            data.superHeavyStar = true;    
+        }
+
+
+        updatePaths();
+
+        scene.remove(wireframeHeavy);
+        scene.remove(wireframeLight);
+        scene.remove(wireframeSuperHeavy);
+            
+
+        if (data.lightStar){
+            data.mass = data.lightMass;
+            initWireframe("light"); 
+        }
+
+        if (data.heavyStar){
+            data.mass = data.heavyMass;
+            initWireframe("heavy"); 
+        }
+
+
+        if (data.superHeavyStar){
+            data.mass = data.superHeavyMass;
+            initWireframe("superHeavy"); 
+        }
+
+
+
+    }
+
+    gui = new dat.GUI();
+    var folder = gui.addFolder( 'Control Mass' );
+
+    //folder.add(data, 'mass', 0, maxMass).step(0.5).onChange(updateGeometryMass);
+    if (narrationPhase == "massInteraction"){
+        folder.add(data, 'starMass', { Light: 1, Heavy: 2, Very_Heavy: 3 } ).listen().onChange(updatePathsAndWireframes);
+        updatePathsAndWireframes();
+    }
+    else{
+        folder.add(data, 'lightStar').listen().onChange(updatePaths);
+        folder.add(data, 'heavyStar').listen().onChange(updatePaths);
+        folder.add(data, 'superHeavyStar').listen().onChange(updatePaths);
+        updatePaths();
+    }
+    folder.open();
+
+    
 
 };
 
@@ -347,7 +480,7 @@ function onDocumentMouseMove( event ) {
         mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
         var raycaster = new THREE.Raycaster();
         raycaster.setFromCamera( mouse, camera );
-        var intersects = raycaster.intersectObjects( segments );
+        var intersects = raycaster.intersectObjects( segmentsFlat );
         var vector = new THREE.Vector3();
         vector.set(
             mouse.x,
@@ -355,14 +488,22 @@ function onDocumentMouseMove( event ) {
             0 );
         vector.unproject( camera );
         if ( intersects.length > 0 ) {
-            //intersects[ 0 ].object.material.color.setHex( 0x000000 );
-            scene.remove(segmentSlider);
-            segmentSlider = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
+            intersects[ 0 ].object.material.color.setHex( 0x000000 );
+            var index = segmentsFlat.indexOf(intersects[ 0 ].object);
+            if (segmentsLight[index])
+                segmentsLight[index].material.color.setHex( 0x000000 );
+            if (segmentsHeavy[index])
+                segmentsHeavy[index].material.color.setHex( 0x000000 );
+            if (segmentsSuperHeavy[index])
+                segmentsSuperHeavy[index].material.color.setHex( 0x000000 );
+
+            //scene.remove(segmentSlider);
+            /*segmentSlider = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
             segmentSlider.position.copy(intersects[ 0 ].point);
             segmentSlider.position.z = 0.001;
             segmentSlider.scale.x = 5;
             segmentSlider.scale.y = 1;
-            scene.add(segmentSlider);
+            scene.add(segmentSlider);*/
 
         }
     }
@@ -417,12 +558,23 @@ var initWireframeBH = function(){
 
 
 
+
+
+
+
+/****************************
+**** narrative & render ******
+****************************/
+
+
+
+
 var narrative = function(narrationPhase){
 
     if (narrationPhase == "flatPath"){
        // document.getElementById('narration').innerHTML = "This is a path through the flat space.";
        initFlatGeometry();
-       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 100);
+       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
        var finalCameraPosition = new THREE.Vector3(0,4,50);
        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
        totalNumberOfCamSteps = 400;
@@ -430,8 +582,9 @@ var narrative = function(narrationPhase){
    }   
    else if (narrationPhase == "addStar"){
        // document.getElementById('narration').innerHTML = "Now we add a heavy object, such as a star. <br> The presence of the mass curves the 2D space.";
-       initSphere(false);
-       initWireframe();
+       initSphere(true);
+       initWireframe("light");
+       createCurvedPaths(segmentsLight);
        initLabelsStarPhase();
        type(captionRadialPlane, "This is what you see.", 0);
        type(captionWireFrame, "This is the underlying structure of space.", 0);
@@ -443,20 +596,21 @@ var narrative = function(narrationPhase){
    }
    else if (narrationPhase == "massInteraction"){
         //document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
-        interaction();
+        massInteraction(narrationPhase);
     }
     else if (narrationPhase == "compareDistances"){
         fadeOut(radialPlane);
         fadeOut(SPmesh);
-        fadeOut(wireframe);
+        gui.destroy();
+        massInteraction(narrationPhase);
         compareLengthInteraction();
 
     }
     else if (narrationPhase == "collapse"){
         collapseSphere();
         fadeOut(wireframe);
-        fadeOut(curvedPathRight);
-        fadeOut(curvedPathLeft);
+        //fadeOut(curvedPathRight);
+        //fadeOut(curvedPathLeft);
         animateHorizon(0);
         fadeOut(wireframe);
         initWireframeBH();
@@ -464,7 +618,6 @@ var narrative = function(narrationPhase){
     else if (narrationPhase == "fadeOut"){
        // document.getElementById('narration').innerHTML = "";
        fadeOut(radialPlane);
-
        fadeOut(SPmesh);
        
 
@@ -489,6 +642,14 @@ var render = function (narrationPhase) {
     renderer.render( scene, camera );
 
 };
+
+
+
+
+
+/****************************
+**** event listeners ******
+****************************/
 
 
 document.addEventListener( 'mousemove', onDocumentMouseMove, false );

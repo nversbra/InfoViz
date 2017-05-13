@@ -24,13 +24,13 @@ var blackHole = function (u, v) {
     return new THREE.Vector3(x, y, z);
 };
 
-var starY = function(u, density){
+var starY = function(u, mass){
 
     var R = data.radius;  // radius of the star 
     var rmax =  5 * R; // maximal distance plotted 
     var r = u * rmax;
     var R3 = Math.pow(R,3);
-    var M = (4 * Math.PI / 3) * density * R3;
+    var M = mass;
 
     var max_y = Math.sqrt(R3 / (2 * M)) * ( 1 - Math.sqrt(1 - 2 * M / R)) + Math.sqrt(8 * M *(rmax-2*M)) - Math.sqrt(8 * M *(R-2*M));
 
@@ -58,7 +58,7 @@ var staticStar = function(u, v){
     var R = data.radius;  // radius of the star 
     var rmax =  5 * R;
     v = v * 2 * Math.PI; // v scaled to angle range 
-    var y = starY(u, data.density )
+    var y = starY(u, data.mass )
     var r = u * rmax;
     var x = r * Math.cos(v);
     var z = r * Math.sin(v);
@@ -85,14 +85,13 @@ var starPath = function(u, symmetricPart){
 
     var R = data.radius;  // radius of the star 
     var rmax =  5 * R;
-    var y = starY(u, data.density )
+    var y = starY(u, data.mass)
     var r = u * rmax;
     
     var x = r * Math.cos(u/10);
     if (symmetricPart)
         return new THREE.Vector3(-x, y, 0);
     else {
-        console.log(THREE.Vector3(x, y, 0))
         return new THREE.Vector3(x, y, 0);
 
     }
