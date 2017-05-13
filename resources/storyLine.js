@@ -1,8 +1,8 @@
 var StoryLine = {
   draw: function(id, events, options){
     var cfg = {
-      width: 600,
-      height: 200,
+      width: 800,
+      height: 50,
       radius: 15,
       lineWidth: 4,
       color: "white",
