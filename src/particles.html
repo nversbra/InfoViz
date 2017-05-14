@@ -128,7 +128,8 @@
         var camera, DualCamera1, DualCamera2, cameraHelper, DualCameraHelper, particleSystem;
         var DualActive = false;
         var Center;
-        var maxDistance = 4200;
+        var maxDistance = 40000;
+        // var maxDistance = 4200;
         var minDistance = 60;
         var narrationEnabled = true;
         var userJump = false;
@@ -238,7 +239,8 @@
             scene = new THREE.Scene();
             console.log(scene.background);
             // create a camera, which defines where we're looking at.
-            camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
+            // camera = new THREE.PerspectiveCamera(45, aspect, 1, 5000);
+            camera = new THREE.PerspectiveCamera(45, aspect, 1, 80000);
 
             DualCamera1 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
             DualCamera2 = new THREE.PerspectiveCamera(45, aspect / 2, 1, 5000);
@@ -271,7 +273,7 @@
             controls.maxDistance = maxDistance;
             controls.minDistance = minDistance;
             controls.update();
-            controls.dollyIn(5);
+            // controls.dollyIn(5);
             controls.update();
 
 
@@ -440,9 +442,10 @@
 
 
                 executeJumpProtocol();
-                camera.position.x = -0.2799995955564319;
-                camera.position.y = 1.3999979777821712;
-                camera.position.z = 389.99878666929555;
+
+                camera.position.x = -9.999870002534946;
+                camera.position.y = 49.99935001267412;
+                camera.position.z = 729.8700025349444;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 CurrentStage = 4;
                 controls.update();
@@ -515,7 +518,7 @@
             if (emittedLight != undefined) {
                 emittedLight.material.color.set(new THREE.Color(Math.abs(1 - zoomLevel), 0, zoomLevel));
             }
-            if (zoomLevel > 0.95) {
+            if (zoomLevel > 0.98) {
                 DualActive = true;
             } else {
                 DualActive = false;
@@ -579,7 +582,8 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
+                    audioLoader.load('http://localhost:8080/resources/audios/milkyway/1.wav', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1.2);
                     sound.play();
@@ -596,16 +600,17 @@
             // Rotate the camera while the narrator explains what the milky way is.
             else if (CurrentStage == 2) {
                 if (particleSystem) {
-                    particleSystem.rotation.y += 0.003;
+                    particleSystem.rotation.y += 0.001;
                 }
 
             }
             // Zoom into the black hole so that the explaining audio can play
             else if (CurrentStage == 3) {
                 audioPlaying = false;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
                 //zoom in
-                if (camera.position.z > 390) {
-                    camera.position.z = camera.position.z - 30;
+                if (camera.position.z > 800) {
+                    camera.position.z = camera.position.z - 200;
                     // camera.fov *= 10;
                     // camera.updateProjectionMatrix();
                 }
@@ -619,7 +624,8 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/2.wav', function (buffer) {
                     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1);
@@ -640,12 +646,14 @@
             // once the audio explaining a blackholes is done, zoom in to activate the next view
             else if (CurrentStage == 6) {
                 audioPlaying = false;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
                 if (camera.position.z > 100) {
-                    camera.position.z = camera.position.z - 1;
+                    camera.position.z = camera.position.z - 3;
                     // camera.fov *= 10;
                     // camera.updateProjectionMatrix();
                 }
                 else {
+                    
                     CurrentStage++;
                     //window.location = "http://www.google.com";
                 }
@@ -700,7 +708,7 @@
         var storyLineData = [
             { "value": 1, "name": firstScene, "radius": "18", img: '../images/milkyWay-capture.PNG' },
             { "value": 5, "name": secondScene, img: '../images/black-hole-capture.PNG' },
-            { "value": 7, "name": thirdScene, "radius": "18", img: '../images/noise-background.jpeg' },
+            { "value": 7, "name": thirdScene, "radius": "18", img: '../images/split-screen-capture.PNG' },
             { "value": 8, "name": fourthScene, img: '../images/noise-background.jpeg', color: "#777", background: "#777" }
         ];
 
