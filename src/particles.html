@@ -132,6 +132,7 @@
         var minDistance = 60;
         var narrationEnabled = true;
         var userJump = false;
+        
 
         var aspect = window.innerWidth / window.innerHeight;
         var textpresent;
@@ -429,7 +430,7 @@
 
                 camera.position.x = -10;
                 camera.position.y = 50;
-                camera.position.z = 30000;
+                camera.position.z = maxDistance;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 CurrentStage = 1;
                 controls.update();
@@ -578,9 +579,9 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
                     sound.setBuffer(buffer);
-                    sound.setVolume(0.5);
+                    sound.setVolume(1.2);
                     sound.play();
                     sound.source.onended = function () {
                         console.log("onended called")
@@ -618,10 +619,10 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('http://localhost:8080/resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
                     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
-                    sound.setVolume(0.5);
+                    sound.setVolume(1);
                     sound.play();
                     sound.source.onended = function () {
                         incStage();
@@ -697,8 +698,8 @@
     </div>
     <script type="text/javascript">
         var storyLineData = [
-            { "value": 1, "name": firstScene, "radius": "18", img: '../images/noise-background.jpeg' },
-            { "value": 5, "name": secondScene, img: '../images/noise-background.jpeg' },
+            { "value": 1, "name": firstScene, "radius": "18", img: '../images/milkyWay-capture.PNG' },
+            { "value": 5, "name": secondScene, img: '../images/black-hole-capture.PNG' },
             { "value": 7, "name": thirdScene, "radius": "18", img: '../images/noise-background.jpeg' },
             { "value": 8, "name": fourthScene, img: '../images/noise-background.jpeg', color: "#777", background: "#777" }
         ];

@@ -3,9 +3,21 @@ Introduction
 ***************
 
 
-Around 250 billion. That is the current estimate of how many stars there are in the Milky Way. You can see a visualization of ... of them now.  Much like us tiny, earthly humans, all these stars were once born, and one day they will die as well. But unlike us humans, the afterlife of some of the stars can be quite spectacular. They can continue their existence in the exotic forms of red giants, brown dwarfs or neutron stars. But the heaviest of them are doomed to end as black holes. 
+Around 250 billion. That is the current estimate of how many stars there are in the Milky Way. And what you are seeing now, is an approximate visualization of them.
 
-The birth of a star takes place when a gigantic cloud of interstellar dust collapses under its own gravity. The collapsing matter creates a pressure that ignites a nuclear fusion reaction: the time has come for the star to shine. Depending on its mass, it will continue to do so for millions to billions of years. But in the end, it will run out of elements to burn in its fusion reaction, and once the fuel is gone, the shiny life of the star comes to an end. Because there is no outward pressure from the nuclear reaction anymore, the heaviest stars collapse further under their own weight. They become incredibly massive and dense, and they exert an unimaginable gravitational force on the objects around them. They become black holes. And the very center of the Milky Way contains such a black hole...
+Much like us tiny, earthly humans, all these stars were once born, and one day they will die as well. 
+
+But unlike us humans, the afterlife of some of these stars can be quite spectacular. They can continue their existence in the exotic forms of red giants, brown dwarfs or neutron stars. But the heaviest of them are doomed to end as black holes. 
+
+The birth of a star takes place when a gigantic cloud of interstellar dust collapses under its own gravity. The collapsing matter creates a pressure that ignites a nuclear fusion reaction: the time has come for the star to shine. 
+
+Depending on its mass, it will continue to do so for millions to billions of years. But in the end, it will run out of elements to burn in its fusion reaction, and once the fuel is depleted, the shiny life of the star comes to an end.
+
+Because there is no outward pressure from the nuclear reaction anymore, the heaviest stars collapse further under their own weight.
+
+They become incredibly massive and dense, and they exert an incredible gravitational force on the objects around them. They become black holes. 
+
+And the very center of the Milky Way contains such a black hole...
 
 ***************
 zoom into black hole
@@ -13,7 +25,17 @@ zoom into black hole
 
 Meet Sagittarius A*, a lump of 4 million times the mass of the Sun. 
 
-Just like a rocket needs a certain speed to be launched and to escape the gravity of the earth, black holes are so dense that the needed speed exceeds the speed of light, which is, in this universe, an impossible thing. Thus even light cannot escape the region near the black hole. Since we can only see things because their light reaches us, we cannot directly see a black hole, nor can we see a whole region around it where the escape speed still exceeds the speed of light. This region is bordered by what is called the horizon: inside it, light cannot escape to reach an outsider, but just outside it, it becomes possible for the light to move away from the black hole towards the eye of an observer standing further away. So here you thus see Sagittarius A*'s horizon. We have not included the light coming from just outside the horizon, but everyone who has seen the movie interstellar might recall the impressive image of the light around a black hole that was shown there. The light is bent in very strange ways, because, as discovered by Einstein through his theory of general relativity, gravity bends the spacetime itself. 
+Just like a rocket needs a certain speed to be launched and to escape the gravity of the earth, black holes are so dense that the needed speed exceeds the speed of light, which, in this universe, is an impossible thing. 
+
+Thus, even light cannot escape the region near the black hole. 
+
+Since we can only see things because their light reaches us, we cannot directly see a black hole, nor can we see a whole region around it where the escape speed still exceeds the speed of light. 
+
+This region is bordered by what is called the horizon: inside it, light cannot escape to reach an outsider, but just outside it, it becomes possible for the light to move away from the black hole towards the eye of an observer standing further away. 
+
+So here you thus see Sagittarius A*'s horizon. We have not included the light coming from just outside the horizon, but everyone who has seen the movie interstellar might recall the impressive image of the light around a black hole that was shown there. 
+
+The light is bent in very strange ways, because, as discovered by Einstein through his theory of general relativity, gravity bends the spacetime itself. 
 
 ***************
 unfold split screen 
