@@ -472,6 +472,20 @@
                 controls.update();
                 return true
             }
+
+            else if (sceneName === fourthScene) {
+                executeJumpProtocol();
+
+
+                camera.position.x = -0.2799995955564319;
+                camera.position.y = 1.3999979777821712;
+                camera.position.z = 99.99878666929555;
+                camera.lookAt(new THREE.Vector3(10, -20, 0));
+                CurrentStage = 9;
+                controls.update();
+                return true
+            }
+
             else if (sceneName === fifthScene) {
 
 
@@ -481,14 +495,14 @@
                 camera.position.y = 50;
                 camera.position.z = maxDistance;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
-                CurrentStage = 9;
+                CurrentStage = 13;
                 controls.update();
                 return true
             }
             else if (sceneName === sixthScene) {
 
 
-                CurrentStage = 12;
+                CurrentStage = 16;
                 return true
             }
             else {
@@ -565,8 +579,8 @@
 
                 webGLRenderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
                 if (emittedLight != undefined) {
-                    emittedLight.material.color.set(new THREE.Color(1, 0, 0));                
-}
+                    emittedLight.material.color.set(new THREE.Color(1, 0, 0));
+                }
 
                 webGLRenderer.render(scene, DualCamera2);
             } else {
@@ -680,26 +694,49 @@
                     // camera.updateProjectionMatrix();
                 }
                 else {
-                    listener = new THREE.AudioListener();
-                    sound = new THREE.Audio(listener);
-                    audioLoader = new THREE.AudioLoader();
-                    // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
-                    audioLoader.load('http://localhost:8080/resources/audios/milkyway/split1.wav', function (buffer) {
-                        // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
-                        sound.setBuffer(buffer);
-                        sound.setVolume(1);
-                        sound.play();
-                        sound.source.onended = function () {
-                            incStage();
-                            this.isPlaying = false;
-                            /* sets Three wrapper property correctly */
-                        };
-                    });
-                    audioPlaying = true;
                     CurrentStage++;
+                    // listener = new THREE.AudioListener();
+                    // sound = new THREE.Audio(listener);
+                    // audioLoader = new THREE.AudioLoader();
+                    // // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                    // audioLoader.load('http://localhost:8080/resources/audios/milkyway/split1.wav', function (buffer) {
+                    //     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    //     sound.setBuffer(buffer);
+                    //     sound.setVolume(1);
+                    //     sound.play();
+                    //     sound.source.onended = function () {
+                    //         incStage();
+                    //         this.isPlaying = false;
+                    //         /* sets Three wrapper property correctly */
+                    //     };
+                    // });
+                    // audioPlaying = true;
+                    // CurrentStage++;
                 }
             }
             else if (CurrentStage == 7) {
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/split1.wav', function (buffer) {
+                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(1.5);
+                    sound.play();
+                    sound.source.onended = function () {
+                        incStage();
+                        this.isPlaying = false;
+                        /* sets Three wrapper property correctly */
+                    };
+                });
+                audioPlaying = true;
+                CurrentStage++;
+            }
+            else if (CurrentStage == 8) {
+                //here you should control the camera while the audio is playing
+            }
+            else if (CurrentStage == 9) {
                 audioPlaying = false;
                 if (emittedLight == undefined) {
                     emitLight();
@@ -711,7 +748,7 @@
                 audioLoader.load('http://localhost:8080/resources/audios/milkyway/split2.wav', function (buffer) {
                     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
-                    sound.setVolume(1);
+                    sound.setVolume(1.5);
                     sound.play();
                     sound.source.onended = function () {
                         incStage();
@@ -722,8 +759,52 @@
                 audioPlaying = true;
                 CurrentStage++;
             }
+            else if (CurrentStage == 10) {
+                //here you should control the camera while the audio is playing
+            }
+            else if (CurrentStage == 11) {
+                audioPlaying = false;
+                // if (captionClock1 == undefined) {
+                //     time1 = new Date();
+                //     time2 = new Date();
+                //     emitClock();
+                //     updateClock(time1.getHours().toString() + ':' + time1.getMinutes().toString(), time2.getHours().toString() + ':' + time2.getMinutes().toString())
+                //     //HighlightRight();
+                // }
+                // function minutestoString(min) {
+                //     if (min.length < 2) {
+                //         return '0' + min;
+                //     } else {
+                //         return min;
+                //     }
+                // }
+                // time1 = new Date(time1.getTime() + 300);
+                // time2 = new Date(time2.getTime() + 600);
+                // if (time2.getSeconds() % 50 == 0) {
+                //     updateClock(time1.getHours().toString() + ':' + minutestoString(time1.getMinutes().toString()), time2.getHours().toString() + ':' + minutestoString(time2.getMinutes().toString()));
+                // }
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/split3.wav', function (buffer) {
+                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(1.5);
+                    sound.play();
+                    sound.source.onended = function () {
+                        incStage();
+                        this.isPlaying = false;
+                        /* sets Three wrapper property correctly */
+                    };
+                });
+                audioPlaying = true;
+                CurrentStage++;
 
-            else if (CurrentStage == 8) {
+
+            }
+            else if (CurrentStage == 12) {
+
                 if (captionClock1 == undefined) {
                     time1 = new Date();
                     time2 = new Date();
@@ -743,28 +824,17 @@
                 if (time2.getSeconds() % 50 == 0) {
                     updateClock(time1.getHours().toString() + ':' + minutestoString(time1.getMinutes().toString()), time2.getHours().toString() + ':' + minutestoString(time2.getMinutes().toString()));
                 }
-                listener = new THREE.AudioListener();
-                sound = new THREE.Audio(listener);
-                audioLoader = new THREE.AudioLoader();
-                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/split3.wav', function (buffer) {
-                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
-                    sound.setBuffer(buffer);
-                    sound.setVolume(1);
-                    sound.play();
-                    sound.source.onended = function () {
-                        incStage();
-                        this.isPlaying = false;
-                        /* sets Three wrapper property correctly */
-                    };
-                });
-                audioPlaying = true;
-                CurrentStage++;
-
-                
             }
             //play audio telling the user that the's free to move
-            else if (CurrentStage == 9) {
+            else if (CurrentStage == 13) {
+                try {
+                    updateClock('', '');
+                    scene.remove(emittedLight);
+                    emittedLight = undefined;
+                }
+                catch (e) { }
+
+                audioPlaying = false;
                 controls.enableRotate = true;
                 controls.enableZoom = true;
                 //restart the object references so that the global reference allows us to stop the sound whenever we want
@@ -775,7 +845,7 @@
                 audioLoader.load('http://localhost:8080/resources/audios/milkyway/final.wav', function (buffer) {
                     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
-                    sound.setVolume(1);
+                    sound.setVolume(1.5);
                     sound.play();
                     sound.source.onended = function () {
                         incStage();
@@ -786,18 +856,17 @@
                 audioPlaying = true;
                 CurrentStage++;
             }
-            else if (CurrentStage == 10) {
+            else if (CurrentStage == 14) {
                 //zoom out
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
-                if (camera.position.z < 300) {
-                    camera.position.z = camera.position.z + 8;                    
+                if (camera.position.z < 900) {
+                    camera.position.z = camera.position.z + 8;
                 }
             }
-            else if(CurrentStage == 11)
-            {
+            else if (CurrentStage == 15) {
                 //let the user play around
             }
-            else if (CurrentStage == 12) {
+            else if (CurrentStage == 16) {
                 //trigger redirect to the next stage
                 window.location = "main.html";
                 CurrentStage++;
@@ -819,7 +888,7 @@
             { "value": 1, "name": firstScene, "radius": "18", img: '../images/milkyWay-capture.PNG' },
             { "value": 5, "name": secondScene, img: '../images/black-hole-capture.PNG' },
             { "value": 7, "name": thirdScene, "radius": "18", img: '../images/split-screen-capture.PNG' },
-            { "value": 8, "name": fourthScene, img:  '../images/split-screen-capture.PNG'},
+            { "value": 8, "name": fourthScene, img: '../images/split-screen-capture.PNG' },
             { "value": 9, "name": fifthScene, img: '../images/milkyWay-capture.PNG' },
             { "value": 10, "name": sixthScene, img: '../images/noise-background.jpeg', color: "#777", background: "#777" }
         ];
