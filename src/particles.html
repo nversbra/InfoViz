@@ -416,6 +416,11 @@
             if (CurrentStage != 8) {
                 try {
                     updateClock('', '');
+                    document.getElementById("WebGL-output").removeChild(captionClock1.element);
+                    document.getElementById("WebGL-output").removeChild(captionClock2.element);
+                    captionClock1 = undefined;
+                    captionClock2 = undefined;
+
                 }
                 catch (e) { }
             }
@@ -829,6 +834,10 @@
             else if (CurrentStage == 13) {
                 try {
                     updateClock('', '');
+                    document.getElementById("WebGL-output").removeChild(captionClock1.element);
+                    document.getElementById("WebGL-output").removeChild(captionClock2.element);
+                    captionClock1 = undefined;
+                    captionClock2 = undefined;
                     scene.remove(emittedLight);
                     emittedLight = undefined;
                 }
