@@ -5,11 +5,12 @@ body {
 
 #instructions {
 	position: absolute;
-	color: #666;
+	color: #cfcfcf;
 	bottom: 0;
-	padding-bottom: 6px;
+	padding-bottom: 60px;
 	font-family: sans-serif;
 	width: 100%;
 	text-align: center;
-	pointer-events: none;
+	text-decoration: none;
+
 }

@@ -23,11 +23,9 @@ function init() {
   }
 
   var tl = new TimelineMax({
-    delay:0.5,
-    repeat:0,
-    repeatDelay:0.5,
-
-
+    repeat:-1,
+      yoyo: true,
+    repeatDelay:0.5
   });
   tl.fromTo(textAnimation, 4,
     {animationProgress:0.0},
@@ -35,9 +33,8 @@ function init() {
     0
   );
   tl.fromTo(textAnimation.rotation, 4, {y:0}, {y:Math.PI * 2, ease:Power1.easeInOut}, 0);
-tl.addPause();
-  tl.addLabel("complete");
-    tl.addCallback(startFirstView, "complete")
+
+
 
 }
 
