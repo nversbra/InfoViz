@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Particles</title>
+    <title>Black Holes and Revelations</title>
     <script type="text/javascript" src="../resources/CSVtoJSONConverter/starsHMY.js"></script>
     <script type="text/javascript" src="../libs/threeJS/three.js"></script>
     <script type="text/javascript" src="../libs/orbitControls/OrbitControls.js"></script>
@@ -413,9 +413,16 @@
                 userJump = true;
                 sound.stop();
             }
-            if (CurrentStage > 7) {
+            if (CurrentStage != 8) {
                 try {
                     updateClock('', '');
+                }
+                catch (e) { }
+            }
+            if (CurrentStage != 7) {
+                try {
+                    scene.remove(emittedLight);
+                    emittedLight = undefined;
                 }
                 catch (e) { }
             }
@@ -673,9 +680,23 @@
                     // camera.updateProjectionMatrix();
                 }
                 else {
-
+                    listener = new THREE.AudioListener();
+                    sound = new THREE.Audio(listener);
+                    audioLoader = new THREE.AudioLoader();
+                    // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                    audioLoader.load('http://localhost:8080/resources/audios/milkyway/split1.wav', function (buffer) {
+                        // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                        sound.setBuffer(buffer);
+                        sound.setVolume(1);
+                        sound.play();
+                        sound.source.onended = function () {
+                            incStage();
+                            this.isPlaying = false;
+                            /* sets Three wrapper property correctly */
+                        };
+                    });
+                    audioPlaying = true;
                     CurrentStage++;
-                    //window.location = "http://www.google.com";
                 }
             }
             else if (CurrentStage == 7) {
@@ -683,21 +704,32 @@
                 if (emittedLight == undefined) {
                     emitLight();
                 }
-                controls.enableRotate = true;
-                controls.enableZoom = true;
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/split2.wav', function (buffer) {
+                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(1);
+                    sound.play();
+                    sound.source.onended = function () {
+                        incStage();
+                        this.isPlaying = false;
+                        /* sets Three wrapper property correctly */
+                    };
+                });
+                audioPlaying = true;
                 CurrentStage++;
             }
 
             else if (CurrentStage == 8) {
-                audioPlaying = false;
                 if (captionClock1 == undefined) {
                     time1 = new Date();
                     time2 = new Date();
-                    scene.remove(emittedLight);
-                    emittedLight = undefined;
                     emitClock();
                     updateClock(time1.getHours().toString() + ':' + time1.getMinutes().toString(), time2.getHours().toString() + ':' + time2.getMinutes().toString())
-                    HighlightRight();
+                    //HighlightRight();
                 }
                 function minutestoString(min) {
                     if (min.length < 2) {
@@ -711,6 +743,24 @@
                 if (time2.getSeconds() % 50 == 0) {
                     updateClock(time1.getHours().toString() + ':' + minutestoString(time1.getMinutes().toString()), time2.getHours().toString() + ':' + minutestoString(time2.getMinutes().toString()));
                 }
+                listener = new THREE.AudioListener();
+                sound = new THREE.Audio(listener);
+                audioLoader = new THREE.AudioLoader();
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/split3.wav', function (buffer) {
+                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(1);
+                    sound.play();
+                    sound.source.onended = function () {
+                        incStage();
+                        this.isPlaying = false;
+                        /* sets Three wrapper property correctly */
+                    };
+                });
+                audioPlaying = true;
+                CurrentStage++;
+
                 
             }
             //play audio telling the user that the's free to move
