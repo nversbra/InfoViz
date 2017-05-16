@@ -3,12 +3,19 @@ body {
 	overflow: hidden;
 }
 
+@font-face {
+	font-family: 'inconsolata';
+	src: url('../resources/inconsolata.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
 #instructions {
 	position: absolute;
 	color: #cfcfcf;
 	bottom: 0;
 	padding-bottom: 60px;
-	font-family: sans-serif;
+	font-family: 'inconsolata';
 	width: 100%;
 	text-align: center;
 	text-decoration: none;

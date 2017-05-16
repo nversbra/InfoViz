@@ -42,8 +42,7 @@ function createTextAnimation() {
   var geometry = generateTextGeometry('Black Holes and Revelations', {
     size:40,
     height:12,
-    font:'droid sans',
-    weight:'bold',
+    font:'Inconsolata',
     style:'normal',
     curveSegments:24,
     bevelSize:2,
