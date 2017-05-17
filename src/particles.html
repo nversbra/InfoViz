@@ -632,7 +632,7 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
+                //audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
                 audioLoader.load('http://localhost:8080/resources/audios/milkyway/1.wav', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1.2);
@@ -680,9 +680,9 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/2.wav', function (buffer) {
-                    // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                //audioLoader.load('http://localhost:8080/resources/audios/milkyway/2.wav', function (buffer) {
+                    //audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1);
                     sound.play();

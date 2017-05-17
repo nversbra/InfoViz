@@ -102,6 +102,10 @@ var segmentMat = new THREE.LineBasicMaterial( {
     linewidth: 3
 } );
 
+var listener = new THREE.AudioListener();
+var sound = new THREE.Audio(listener);
+var audioLoader = new THREE.AudioLoader();
+
 
 
 /****************************
@@ -203,6 +207,15 @@ var fadeIn = function(ThreeJSObject){
     }*/
 }
 
+var playAudio = function(fileName){
+    audioLoader.load(fileName, function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setVolume(1.5);
+        sound.play();        
+    });
+
+}
+
 
 
 
@@ -235,7 +248,7 @@ var animateFlatPath = function(segmentIndex, totalLength, totalNumberOfSegments)
             segmentsFlat.push(segmentFlat);
             scene.add(segmentsFlat[segmentIndex-1]);
             animateFlatPath(segmentIndex, totalLength, totalNumberOfSegments);
-        }, 30);
+        }, 60);
     };
 }
 
@@ -247,16 +260,16 @@ var initSphere = function(withTexture){
     var SPMaterial;
     if (withTexture){
         SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : false, opacity: 0.2 });//, map: THREE.ImageUtils.loadTexture('../images/star-surface.jpg')});
-    }
-    else{
-        SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : true, opacity: 0});   
-    }
+}
+else{
+    SPmaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, wireframe: false, transparent : true, opacity: 0});   
+}
 
-    SPmesh = new THREE.Mesh( SP, SPmaterial );
-    var opacity = data.mass / maxMass + 0.6;
-    SPmesh.material.opacity =  opacity ;
-    SPmesh.position.y = data.offsetY;
-    scene.add(SPmesh);     
+SPmesh = new THREE.Mesh( SP, SPmaterial );
+var opacity = data.mass / maxMass + 0.6;
+SPmesh.material.opacity =  opacity ;
+SPmesh.position.y = data.offsetY;
+scene.add(SPmesh);     
 }
 
 var metricScalingStar = function(currentR){
@@ -285,15 +298,15 @@ var generatePath = function(symmetricPart, type, segmentsArray){
     for (i = 0; i < maxIndex  ; i++) { 
         var j = i; 
         if (symmetricPart)
-           j = maxIndex - i; 
+         j = maxIndex - i; 
 
-       var currentI = j/maxIndex;
-       var currentR = j;
+     var currentI = j/maxIndex;
+     var currentR = j;
 
-       var metricScaling; 
-       var segmentCurved;
+     var metricScaling; 
+     var segmentCurved;
 
-       if (type == "star"){
+     if (type == "star"){
         metricScaling = metricScalingStar(currentR);
         segmentCurved = drawSegment(starPath(currentI, symmetricPart), metricScaling);
     }
@@ -392,7 +405,7 @@ var initLabelsStarPhase = function(){
 var removeLabelsStarPhase = function(){
     while (this.ThreeJS.hasChildNodes()) {
         this.ThreeJS.removeChild(this.ThreeJS.lastChild);
-}
+    }
 
 }
 
@@ -699,19 +712,24 @@ var createBHPath = function(){
 
 var narrative = function(narrationPhase){
 
+
     if (narrationPhase == "flatPath"){
-       // document.getElementById('narration').innerHTML = "This is a path through the flat space.";
-       initFlatGeometry();
-       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
-       var finalCameraPosition = new THREE.Vector3(0,4,50);
-       camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-       totalNumberOfCamSteps = 400;
-       camStepsIndex=0;
-   }   
-   else if (narrationPhase == "addStar"){
+     initFlatGeometry();
+     playAudio('http://localhost:8080/resources/audios/EV/EV1_1.wav');
+     animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
+     var finalCameraPosition = new THREE.Vector3(0,4,50);
+     camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+     totalNumberOfCamSteps = 1500;
+     camStepsIndex=0;
+
+
+
+ }   
+ else if (narrationPhase == "addStar"){
        // document.getElementById('narration').innerHTML = "Now we add a heavy object, such as a star. <br> The presence of the mass curves the 2D space.";
        initSphere(true);
        initWireframe("light");
+       playAudio('http://localhost:8080/resources/audios/EV/EV2_0.wav');
        var finalCameraPosition = new THREE.Vector3(5,1,50);
        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
        totalNumberOfCamSteps = 100;
@@ -719,12 +737,15 @@ var narrative = function(narrationPhase){
 
    }
    else if (narrationPhase == "massInteraction"){
+        sound.stop(); 
         //document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
         if(gui)
             gui.destroy();
         massInteraction(narrationPhase);
+        playAudio('http://localhost:8080/resources/audios/EV/EV3_0.wav');
     }
     else if (narrationPhase == "compareDistances"){
+        playAudio('http://localhost:8080/resources/audios/EV/EV4_0.wav');
         fadeOut(radialPlane);
         //fadeOut(SPmesh);
         gui.destroy();
@@ -737,6 +758,7 @@ var narrative = function(narrationPhase){
 
     }
     else if (narrationPhase == "collapse"){
+        playAudio('http://localhost:8080/resources/audios/EV/EV5_0.wav');
         clearSegmentsAndLabels();
         removeLabelsStarPhase();
         if(gui)
@@ -754,6 +776,7 @@ var narrative = function(narrationPhase){
         
     }
     else if (narrationPhase == "compareDistancesBH"){
+        playAudio('http://localhost:8080/resources/audios/EV/EV6_0.wav');
         fadeOut(radialPlane);
         fadeOut(SPmesh);
         fadeOut(wireframeBH);
@@ -784,7 +807,7 @@ var render = function (narrationPhase) {
 
     for(var i=0; i<textLabels.length; i++) {
       textLabels[i].updatePosition();
-    }
+  }
 
     moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
     camera.lookAt( scene.position );

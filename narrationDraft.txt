@@ -58,9 +58,22 @@ You can now approach the other observer to see for yourself how this changes the
 enter explanatory view 
 ***************
 
-To see how these effects can arise, we have to envision how gravity curves the space and time around a massive object. It is however not possible to visualize the curvature of a four dimensional spacetime, so we concentrate on an two dimensional surface. Think of it as a slice of space. This is such a slice, and you're an observer standing far away. Without mass, this space is flat, and if someone walks through this space, he will appear to you as having a constant velocity. 
+To see how these effects can arise, we have to envision how gravity curves the space and time around a massive object. It is however not possible to visualize the curvature of a four dimensional spacetime, so we concentrate on an two dimensional surface. Think of it as a slice of space. This is such a slice, and you're an observer standing far away. Without mass, this space is flat, and if someone walks through this space following the path, he will appear to you as having a constant velocity. 
 
-Now we add a massive object such as a star. According to Einsteins theory of relativity this mass bends the spacetime around the object. (Remember that we are here only looking at a two-dimensional space, so we do not visualize the effects in time, and the surrounding 3D space only acts as a way to visualize the curvature of the 2D space, but has no meaning in itself). So when someone walks through the slice of space, the geometry is actually determined by the curved surface. A small distance in a flat space corresponds to a much larger distance in space with an underlying curvature. This difference becomes larger when the walking person is closer to the massive object. 
+Now let’s add a massive object, such as a star. According to Einsteins theory of relativity this mass bends the spacetime around the object, which you can see as the curved surface. (The surrounding 3D space only acts as a way to visualize the curvature of the 2D space, but has no meaning in itself). 
+
+You can now change the mass of the star yourself, and the effect on the geometry will be visualised. When you’re finished, you can click on the next rectangle to continue with the narrative. 
+
+Now you can hoover over the straight line.When someone walks through the slice of space, the geometry is actually determined by the curved surface. A small distance in a flat space corresponds to a larger distance in a space with an underlying curvature. To see why, imaging the observers are ants in a 2D space. You are the ant that stays far from the black hole. You try to make a map of the space on a flat piece of paper, drawing from what you see, and you put some coordinates on this map. But since the space is curved, your map cannot be correct, much like you cannot make a perfect map of the curved surface of the earth. The ant walking along the curved paths towards the massive, however, does not notice all of this, and she can measure the distances she travels herself. These are called own or proper distances. The same effect exists for time: the curvature of time leads to a difference between coordinate and proper time. This is why frequencies, and therefore colors, are perceived differently by different observers. 
+
+When the star collapses, the density becomes so high that the escape velocity exceeds the speed of light. You can now see the horizon and a slice of the black hole geometry. 
+
+You can now again compare the distances. Near the horizon, the curvature becomes so large that it looks to you as if the inwards travelling ant needs to cross an infinite distance, so it looks as if she is standing still. However, the travelling ant herself is just walking unsuspectingly along a normal path! (remember that the surrounding 3D space has no meaning other that to visualise the curvature). 
+
+
+
+
+
 
 
 
