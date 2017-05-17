@@ -623,6 +623,7 @@
 
             //start by playing the intro audio
             if (CurrentStage == 1) {
+                setStoryLineColors(1);
                 //disable controls rotation and zoom so we guide the user through the milky way
                 controls.enableRotate = false;
                 controls.enableZoom = false;
@@ -655,8 +656,8 @@
             }
             // Zoom into the black hole so that the explaining audio can play
             else if (CurrentStage == 3) {
-
                 setStoryLineColors(5);
+
 
                 audioPlaying = false;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
@@ -672,8 +673,8 @@
             }
             // play the audio explaining the black hole
             else if (CurrentStage == 4) {
+                
 
-                setStoryLineColors(7);
 
                 //restart the object references so that the global reference allows us to stop the sound whenever we want
                 listener = new THREE.AudioListener();
@@ -696,12 +697,13 @@
             }
             //rotate the camera while a black hole is explained
             else if (CurrentStage == 5) {
-                setStoryLineColors(8);
+                
                 particleSystem.rotation.y += 0.003;
             }
             // once the audio explaining a blackholes is done, zoom in to activate the next view
             else if (CurrentStage == 6) {
-                setStoryLineColors(9);
+                setStoryLineColors(7);
+
                 audioPlaying = false;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 if (camera.position.z > 100) {
@@ -731,7 +733,7 @@
                 }
             }
             else if (CurrentStage == 7) {
-                setStoryLineColors(10);
+                
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
@@ -754,6 +756,7 @@
                 //here you should control the camera while the audio is playing
             }
             else if (CurrentStage == 9) {
+                setStoryLineColors(8);
                 audioPlaying = false;
                 if (emittedLight == undefined) {
                     emitLight();
@@ -780,6 +783,7 @@
                 //here you should control the camera while the audio is playing
             }
             else if (CurrentStage == 11) {
+                
                 audioPlaying = false;
                 // if (captionClock1 == undefined) {
                 //     time1 = new Date();
@@ -844,6 +848,7 @@
             }
             //play audio telling the user that the's free to move
             else if (CurrentStage == 13) {
+                setStoryLineColors(9);
                 try {
                     updateClock('', '');
                     document.getElementById("WebGL-output").removeChild(captionClock1.element);
@@ -888,6 +893,7 @@
                 //let the user play around
             }
             else if (CurrentStage == 16) {
+                setStoryLineColors(10);
                 //trigger redirect to the next stage
                 window.location = "main.html";
                 CurrentStage++;
