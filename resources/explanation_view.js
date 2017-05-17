@@ -39,8 +39,8 @@ var data = {
     sphereRadius : 5,
     radius : 5,
     mass: 0.2,
-    offsetY : 2,
-    meshOffset : 1,
+    offsetY : -1,
+    meshOffset : 3,
     maxRadiusFactor : 5,
     segmentWidth : 1, 
     segmentHeight : 0.15, 
@@ -63,14 +63,10 @@ var wireframeHeavy;
 var wireframeSuperHeavy 
 var wireframeBH;
 var radialPlane;
-/*var nonCurvedPath;
-var curvedPathLeft; 
-var curvedPathRight; */
 var captionRadialPlane; 
 var captionWireFrame;
 var horizon; 
 
-//var paths = [nonCurvedPath, curvedPathLeft, curvedPathRight];
 var allPathsDefined; //when all paths are defined, they can be clicked (allPathsDefined == true -> on click event listener works)
 
 var segmentGeo = new THREE.BoxGeometry( 1, 1, 0 );
@@ -78,7 +74,7 @@ var segmentsFlat = [];
 var segmentsLight = [];
 var segmentsHeavy = [];
 var segmentsSuperHeavy = [];
-//var segmentSlider; 
+var segmentsBlackHole = [];
 var prevSegments = []; // previously selected segments that should become white again if other segments are selected
 var prevSegmentLabels = []; 
 var mouse = new THREE.Vector2();
@@ -86,7 +82,7 @@ var mouse = new THREE.Vector2();
 var lineMat = new THREE.LineBasicMaterial( {
     color: 0xffffff,
     transparent: true,
-    opacity: 0.5, 
+    opacity: 1, 
     polygonOffset: false
 } );
 
@@ -112,12 +108,6 @@ var segmentMat = new THREE.LineBasicMaterial( {
 **** general functions ******
 ****************************/
 
-var forward = function(){
-    narrationIndex += 1;
-    narrationPhase = narrationPhases[narrationIndex];
-    needsUpdate = true;
-}
-
 
 var createLabel = function(parentThreeJSObject, offset_x, offset_y){
     var div = document.createElement('div');
@@ -132,8 +122,6 @@ var createLabel = function(parentThreeJSObject, offset_x, offset_y){
     div.style.left = -1000;
 
     var _this = this;
-
-
     
     return {
       element: div,
@@ -280,35 +268,71 @@ var initSphere = function(withTexture){
     scene.add(SPmesh);     
 }
 
-var generateStarPath = function(symmetricPart, material, segmentsArray){
+var metricScalingStar = function(currentR){
+
+    var metricScaling; 
+
+    if (Math.abs(currentR)  >  Math.abs(data.radius)){
+        metricScaling = 1 / Math.sqrt( (1 - (2 * data.mass / currentR)) );
+    }
+    else if (currentR ==0){
+        metricScaling = 1;
+    }
+    else {
+        var insideMass =  data.mass * Math.pow(currentR/data.radius,3);
+        metricScaling = 1 / Math.sqrt( (1 - (2 * insideMass / currentR)) );
+    }
+
+    return metricScaling;
+
+}
+
+var generatePath = function(symmetricPart, type, segmentsArray){
 
 
     var maxIndex = 5 * data.radius;
     for (i = 0; i < maxIndex  ; i++) { 
         var j = i; 
         if (symmetricPart)
-             j = maxIndex - i; 
+           j = maxIndex - i; 
 
-        var currentI = j/maxIndex;
-        var currentR = j;
-        var metricScaling; 
-        if (Math.abs(currentR)  >  Math.abs(data.sphereRadius)){
-            metricScaling = 1 / Math.sqrt( (1 - (2 * data.mass / currentR)) );
-        }
-        else if (currentR ==0){
-            metricScaling = 1;
-        }
-        else {
-            var insideMass =  data.mass * Math.pow(currentR/data.sphereRadius,3);
-            metricScaling = 1 / Math.sqrt( (1 - (2 * insideMass / currentR)) );
-        }
-        var segmentCurved = drawSegment(starPath(currentI, symmetricPart), metricScaling);
+       var currentI = j/maxIndex;
+       var currentR = j;
+
+       var metricScaling; 
+       var segmentCurved;
+
+       if (type == "star"){
+        metricScaling = metricScalingStar(currentR);
+        segmentCurved = drawSegment(starPath(currentI, symmetricPart), metricScaling);
+    }
+
+    else if (type == "blackHole"){
+        metricScaling = metricScalingBH(currentR);
+        segmentCurved = drawSegment(blackHole(currentI, 0), metricScaling);
+        if (symmetricPart)
+            segmentCurved.position.x = -segmentCurved.position.x;
+    }
+
+    if (metricScaling  == -1){
+        segmentCurved.position.y = -Math.sqrt(25 * 8 * 2.5); 
+        segmentCurved.rotation.z = Math.PI/2;
+        segmentCurved.scale.x = 18;
+
+    }
+
+    else
+    {
         segmentCurved.position.y -= data.meshOffset;
+            if (symmetricPart) //right part of the path: climbing
+                segmentCurved.rotation.z = +Math.asin(1/metricScaling) + 1.5 * Math.PI ;
+            else //left part of the path: ascending
+                segmentCurved.rotation.z = -Math.asin(1/metricScaling) - 1.5 * Math.PI ;
 
-        if (symmetricPart) //right part of the path: climbing
-            segmentCurved.rotation.z = +Math.asin(1/metricScaling) + 1.5 * Math.PI ;
-        else //left part of the path: ascending
-            segmentCurved.rotation.z = -Math.asin(1/metricScaling) - 1.5 * Math.PI ;
+        }
+
+
+
 
         segmentsArray.push(segmentCurved);
 
@@ -355,8 +379,8 @@ var initWireframe = function(wireframe){
 
 var createCurvedPaths = function(segmentsArray) {
 
-    generateStarPath(true, pathMat, segmentsArray); // left path
-    generateStarPath(false, pathMat, segmentsArray); // right path
+    generatePath(true, "star", segmentsArray); // left path
+    generatePath(false, "star", segmentsArray); // right path
 
     allPathsDefined = true; 
 
@@ -382,40 +406,37 @@ var initLabelsStarPhase = function(){
     textLabels.push(captionWireFrame);
 }
 
+function updatePaths() {
+    scene.remove(wireframeHeavy);
+    scene.remove(wireframeLight);
+    scene.remove(wireframeSuperHeavy);
 
-var massInteraction =  function(narrationPhase) {
+    if (data.lightStar){
+        data.mass = data.lightMass;
+        createCurvedPaths(segmentsLight);
+    }
+    else{
+        removeCurvedPaths(segmentsLight);
+    }
 
-    function updatePaths() {
-        scene.remove(wireframeHeavy);
-        scene.remove(wireframeLight);
-        scene.remove(wireframeSuperHeavy);
 
-        if (data.lightStar){
-            data.mass = data.lightMass;
-            createCurvedPaths(segmentsLight);
-        }
-        else{
-            removeCurvedPaths(segmentsLight);
-        }
-            
+    if (data.heavyStar){
+        data.mass = data.heavyMass;
+        createCurvedPaths(segmentsHeavy);
+    }
+    else{
+        removeCurvedPaths(segmentsHeavy);
+    }
 
-        if (data.heavyStar){
-            data.mass = data.heavyMass;
-            createCurvedPaths(segmentsHeavy);
-        }
-        else{
-            removeCurvedPaths(segmentsHeavy);
-        }
-            
 
-        if (data.superHeavyStar){
-            data.mass = data.superHeavyMass;
-            createCurvedPaths(segmentsSuperHeavy);
-        }
-        else{
-            removeCurvedPaths(segmentsSuperHeavy);
-        }
-            
+    if (data.superHeavyStar){
+        data.mass = data.superHeavyMass;
+        createCurvedPaths(segmentsSuperHeavy);
+    }
+    else{
+        removeCurvedPaths(segmentsSuperHeavy);
+    }
+
 
         /*var opacity = data.mass / maxMass + 0.2;
         SPmesh.material.opacity =  opacity ; */
@@ -447,7 +468,7 @@ var massInteraction =  function(narrationPhase) {
         scene.remove(wireframeHeavy);
         scene.remove(wireframeLight);
         scene.remove(wireframeSuperHeavy);
-            
+
 
         if (data.lightStar){
             data.mass = data.lightMass;
@@ -469,8 +490,15 @@ var massInteraction =  function(narrationPhase) {
 
     }
 
-    gui = new dat.GUI();
-    var folder = gui.addFolder( 'Control Mass' );
+
+    var massInteraction =  function(narrationPhase) {
+
+
+
+
+
+        gui = new dat.GUI();
+        var folder = gui.addFolder( 'Control Mass' );
 
     //folder.add(data, 'mass', 0, maxMass).step(0.5).onChange(updateGeometryMass);
     if (narrationPhase == "massInteraction"){
@@ -488,6 +516,20 @@ var massInteraction =  function(narrationPhase) {
     
 
 };
+
+var clearSegmentsAndLabels = function(){
+    var container = document.getElementById( 'ScaleLabels' );
+    for (i = 0; i < prevSegments.length ; i++ ){
+        prevSegments[i].material.color.setHex( 0xffffff );  // change the color of previously selected segments to white again
+    }
+    for (i = 0; i < prevSegmentLabels.length ; i++ ){
+        if (prevSegmentLabels[i])
+            container.removeChild(prevSegmentLabels[i].element);
+    }
+
+    prevSegmentLabels = [null, null, null, null, null];
+
+}
 
 
 
@@ -509,13 +551,10 @@ function onDocumentMouseMove( event ) {
         if ( intersects.length > 0 ) {
             var container = document.getElementById( 'ScaleLabels' );
 
-            for (i = 0; i < prevSegments.length ; i++ ){
-                prevSegments[i].material.color.setHex( 0xffffff );  // change the color of previously selected segments to white again
-                container.removeChild(prevSegmentLabels[i].element);
-            }
+            clearSegmentsAndLabels();
 
             prevSegments = [];
-            prevSegmentLabels = [];
+            
 
             intersects[ 0 ].object.material.color.setHex( 0x000000 ); //set the color of the flat path segment to black
             prevSegments.push(intersects[ 0 ].object);
@@ -525,40 +564,60 @@ function onDocumentMouseMove( event ) {
             labelFlatSegment = createLabel(intersects[ 0 ].object, data.labelOffsetX + 5, data.labelOffsetY);
             labelFlatSegment.setHTML(intersects[ 0 ].object.scale.x);
             labelFlatSegment.updatePosition();
-            prevSegmentLabels.push(labelFlatSegment);
+            //prevSegmentLabels.push(labelFlatSegment);
+            prevSegmentLabels[0] = labelFlatSegment;
             container.appendChild(prevSegmentLabels[0].element);
             
             //set the color of the corresponding curved path segments to black, add the labels
             var index = segmentsFlat.indexOf(intersects[ 0 ].object);
 
-            if (segmentsLight[index]){
-                console.log(segmentsLight[index]);
+            if (segmentsLight[index] && data.lightStar){
                 segmentsLight[index].material.color.setHex( 0x000000 );
                 label = createLabel(segmentsLight[index], data.labelOffsetX, data.labelOffsetY);
                 label.setHTML(segmentsLight[index].scale.x.toPrecision(3));
                 label.updatePosition();
-                prevSegmentLabels.push(label);
+                //prevSegmentLabels.push(label);
+                prevSegmentLabels[1] = label;
                 container.appendChild(prevSegmentLabels[1].element);
                 prevSegments.push(segmentsLight[index]);
             }  
-            if (segmentsHeavy[index]){
+            if (segmentsHeavy[index] && data.heavyStar){
                 segmentsHeavy[index].material.color.setHex( 0x000000 );
                 label = createLabel(segmentsHeavy[index], data.labelOffsetX, data.labelOffsetY);
                 label.setHTML(segmentsHeavy[index].scale.x.toPrecision(3));
                 label.updatePosition();
-                prevSegmentLabels.push(label);
+                //prevSegmentLabels.push(label);
+                prevSegmentLabels[2] = label;
                 container.appendChild(prevSegmentLabels[2].element);
                 prevSegments.push(segmentsHeavy[index]);
             }
-                
-            if (segmentsSuperHeavy[index]){
+
+            if (segmentsSuperHeavy[index] && data.superHeavyStar){
                 segmentsSuperHeavy[index].material.color.setHex( 0x000000 );
                 label = createLabel(segmentsSuperHeavy[index], data.labelOffsetX, data.labelOffsetY);
                 label.setHTML(segmentsSuperHeavy[index].scale.x.toPrecision(3));
                 label.updatePosition();
-                prevSegmentLabels.push(label);
+                //prevSegmentLabels.push(label);
+                prevSegmentLabels[3] = label;
                 container.appendChild(prevSegmentLabels[3].element);
                 prevSegments.push(segmentsSuperHeavy[index]);
+            }
+
+            if (segmentsBlackHole[index]){
+                segmentsBlackHole[index].material.color.setHex( 0x000000 );
+                label = createLabel(segmentsBlackHole[index], data.labelOffsetX, -data.labelOffsetY);
+                var metricScaling =  segmentsBlackHole[index].scale.x.toPrecision(3);
+                if (metricScaling > 10){
+                    label = createLabel(segmentsBlackHole[index], data.labelOffsetX - 2000, -data.labelOffsetY - 200);
+                    label.setHTML("inf");
+                }
+                else
+                    label.setHTML(metricScaling);
+                label.updatePosition();
+                //prevSegmentLabels.push(label);
+                prevSegmentLabels[4] = label;
+                container.appendChild(prevSegmentLabels[4].element);
+                prevSegments.push(segmentsBlackHole[index]);
             }
         }
     }
@@ -607,15 +666,35 @@ var initWireframeBH = function(){
     var edgesGeo = new THREE.EdgesGeometry(BH, 0.01);
     lineMat.opacity = 0;
     wireframeBH = new THREE.LineSegments( edgesGeo, lineMat );
-    wireframeBH.position.y = -data.meshOffset - Math.sqrt(25 * 8 * 2.5);
+    wireframeBH.position.y = -data.meshOffset; //- Math.sqrt(25 * 8 * 2.5);
     scene.add( wireframeBH );
     fadeIn(wireframeBH);
     //
 
 }
 
+var metricScalingBH = function(currentR){
 
 
+    var metricScaling; 
+    //metricScaling =  1 / Math.sqrt( (1 - (2 * 2.5 / currentR )))
+    if (Math.abs(currentR)  >  Math.abs(data.radius)){
+        metricScaling =  1 / Math.sqrt( (1 - (2 * 2.5 / currentR )))
+    }
+    else if (Math.abs(currentR)  ==  Math.abs(data.radius)){
+        metricScaling = -1;
+    }
+    else {
+        metricScaling = 0;
+    }
+    return metricScaling;
+}
+
+
+var createBHPath = function(){
+    generatePath(true, "blackHole", segmentsBlackHole); // left path
+    generatePath(false, "blackHole", segmentsBlackHole); // right path
+}
 
 
 
@@ -668,22 +747,32 @@ var narrative = function(narrationPhase){
 
     }
     else if (narrationPhase == "collapse"){
+        clearSegmentsAndLabels();
         if(gui)
             gui.destroy();
         allPathsDefined = false; 
         data.heavyStar = false;
         data.lightStar = false; 
         data.superHeavyStar = false; 
-        massInteraction("compareDistances");
+        updatePaths();
         collapseSphere();
         animateHorizon(0);
         initFlatGeometry();
         initWireframeBH();
+        
     }
-    else if (narrationPhase == "fadeOut"){
-       // document.getElementById('narration').innerHTML = "";
-       fadeOut(radialPlane);
-       fadeOut(SPmesh);
+    else if (narrationPhase == "compareDistancesBH"){
+        fadeOut(radialPlane);
+        fadeOut(SPmesh);
+        fadeOut(wireframeBH);
+        createBHPath();
+        allPathsDefined = true; 
+        massInteraction("compareDistances");
+        data.lightStar = false; 
+        //fadeOut(horizon);
+        
+       //massInteraction("compareDistances");
+
        
 
    }
@@ -700,7 +789,7 @@ var render = function (narrationPhase) {
 
     /*for(var i=0; i<textLabels.length; i++) {
       textLabels[i].updatePosition();
-    }*/
+  }*/
 
     moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
     camera.lookAt( scene.position );
