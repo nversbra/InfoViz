@@ -453,6 +453,8 @@
             else if (sceneName === secondScene) {
 
 
+
+
                 executeJumpProtocol();
 
                 camera.position.x = -9.999870002534946;
@@ -653,6 +655,9 @@
             }
             // Zoom into the black hole so that the explaining audio can play
             else if (CurrentStage == 3) {
+
+                setStoryLineColors(5);
+
                 audioPlaying = false;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 //zoom in
@@ -667,6 +672,9 @@
             }
             // play the audio explaining the black hole
             else if (CurrentStage == 4) {
+
+                setStoryLineColors(7);
+
                 //restart the object references so that the global reference allows us to stop the sound whenever we want
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
@@ -688,10 +696,12 @@
             }
             //rotate the camera while a black hole is explained
             else if (CurrentStage == 5) {
+                setStoryLineColors(8);
                 particleSystem.rotation.y += 0.003;
             }
             // once the audio explaining a blackholes is done, zoom in to activate the next view
             else if (CurrentStage == 6) {
+                setStoryLineColors(9);
                 audioPlaying = false;
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 if (camera.position.z > 100) {
@@ -721,6 +731,7 @@
                 }
             }
             else if (CurrentStage == 7) {
+                setStoryLineColors(10);
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
@@ -890,14 +901,14 @@
     <div>
         <!--<p id="narration"> </p>-->
         <p onclick="forward()" id="next_round">&#8250;</p>
-        <div id="storyline" style="position:absolute; width:1000px;height: 150px; color: white; left:50%;
-        margin-left:-300px; bottom:0px;"></div>
+        <div id="storyline" style="position:absolute; width:800px;height: 50px; color: white; left:50%;
+        margin-left:-400px; bottom:10px; background: rgba(54, 54, 54, 0.8);"></div>
     </div>
     <script type="text/javascript">
         var storyLineData = [
-            { "value": 1, "name": firstScene, "radius": "18", img: '../images/milkyWay-capture.PNG' },
+            { "value": 1, "name": firstScene, img: '../images/milkyWay-capture.PNG' },
             { "value": 5, "name": secondScene, img: '../images/black-hole-capture.PNG' },
-            { "value": 7, "name": thirdScene, "radius": "18", img: '../images/split-screen-capture.PNG' },
+            { "value": 7, "name": thirdScene, img: '../images/split-screen-capture.PNG' },
             { "value": 8, "name": fourthScene, img: '../images/split-screen-capture.PNG' },
             { "value": 9, "name": fifthScene, img: '../images/milkyWay-capture.PNG' },
             { "value": 10, "name": sixthScene, img: '../images/noise-background.jpeg', color: "#777", background: "#777" }
