@@ -19,7 +19,7 @@ renderer.setClearColor( 0x00000, 0 );
 document.body.appendChild( renderer.domElement );
 
 var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-orbit.enabled = true; 
+orbit.enabled = false; 
 
 var textLabels = []; 
 
@@ -44,6 +44,8 @@ var data = {
     maxRadiusFactor : 5,
     segmentWidth : 1, 
     segmentHeight : 0.15, 
+    labelOffsetX : -10,
+    labelOffsetY : -35,
     lightStar : true,
     lightMass : 0.2, 
     heavyStar : false, 
@@ -76,12 +78,14 @@ var segmentsFlat = [];
 var segmentsLight = [];
 var segmentsHeavy = [];
 var segmentsSuperHeavy = [];
-var segmentSlider; 
+//var segmentSlider; 
+var prevSegments = []; // previously selected segments that should become white again if other segments are selected
+var prevSegmentLabels = []; 
 var mouse = new THREE.Vector2();
 
 var lineMat = new THREE.LineBasicMaterial( {
     color: 0xffffff,
-    transparent: false,
+    transparent: true,
     opacity: 0.5, 
     polygonOffset: false
 } );
@@ -115,18 +119,21 @@ var forward = function(){
 }
 
 
-var createLabel = function(parentThreeJSObject){
+var createLabel = function(parentThreeJSObject, offset_x, offset_y){
     var div = document.createElement('div');
     div.className = 'text-label';
     div.style.position = 'absolute';
     div.style.width = 100;
     div.style.height = 100;
+    div.style.color = 'black'; 
     // this is updated once the scene is rendered 
     div.innerHTML = "";
     div.style.top = -1000;
     div.style.left = -1000;
 
     var _this = this;
+
+
     
     return {
       element: div,
@@ -141,11 +148,11 @@ var createLabel = function(parentThreeJSObject){
         updatePosition: function() {
             if(parent) {
                 this.position.copy(this.parent.position);
-                this.position.x += data.maxRadiusFactor * data.radius;
+                //this.position.x += data.maxRadiusFactor * data.radius;
             }
             var coords2d = this.get2DCoords();
-            this.element.style.left = (coords2d.x + 20) + 'px';
-            this.element.style.top = (coords2d.y + 50) + 'px';
+            this.element.style.left = (coords2d.x + offset_x) + 'px';
+            this.element.style.top = (coords2d.y + offset_y) + 'px';
         },
         get2DCoords: function() {
             var vector = this.position.project(camera);
@@ -194,6 +201,18 @@ var fadeOut = function(ThreeJSObject){
     else{
         scene.remove(ThreeJSObject);
     }
+}
+
+var fadeIn = function(ThreeJSObject){
+    if (ThreeJSObject.material.opacity < 1){
+        setTimeout(function(){
+            ThreeJSObject.material.opacity += 0.10; 
+            fadeIn(ThreeJSObject);
+        }, 30);
+    }
+    /*else{
+        scene.add(ThreeJSObject);
+    }*/
 }
 
 
@@ -358,7 +377,7 @@ var initLabelsStarPhase = function(){
     this.ThreeJS.appendChild(captionRadialPlane.element);
     textLabels.push(captionRadialPlane);
 
-    captionWireFrame = createLabel(wireframe);
+    captionWireFrame = createLabel(wireframeLight);
     this.ThreeJS.appendChild(captionWireFrame.element);
     textLabels.push(captionWireFrame);
 }
@@ -488,23 +507,59 @@ function onDocumentMouseMove( event ) {
             0 );
         vector.unproject( camera );
         if ( intersects.length > 0 ) {
-            intersects[ 0 ].object.material.color.setHex( 0x000000 );
+            var container = document.getElementById( 'ScaleLabels' );
+
+            for (i = 0; i < prevSegments.length ; i++ ){
+                prevSegments[i].material.color.setHex( 0xffffff );  // change the color of previously selected segments to white again
+                container.removeChild(prevSegmentLabels[i].element);
+            }
+
+            prevSegments = [];
+            prevSegmentLabels = [];
+
+            intersects[ 0 ].object.material.color.setHex( 0x000000 ); //set the color of the flat path segment to black
+            prevSegments.push(intersects[ 0 ].object);
+            
+
+            // add the label 
+            labelFlatSegment = createLabel(intersects[ 0 ].object, data.labelOffsetX + 5, data.labelOffsetY);
+            labelFlatSegment.setHTML(intersects[ 0 ].object.scale.x);
+            labelFlatSegment.updatePosition();
+            prevSegmentLabels.push(labelFlatSegment);
+            container.appendChild(prevSegmentLabels[0].element);
+            
+            //set the color of the corresponding curved path segments to black, add the labels
             var index = segmentsFlat.indexOf(intersects[ 0 ].object);
-            if (segmentsLight[index])
+
+            if (segmentsLight[index]){
+                console.log(segmentsLight[index]);
                 segmentsLight[index].material.color.setHex( 0x000000 );
-            if (segmentsHeavy[index])
+                label = createLabel(segmentsLight[index], data.labelOffsetX, data.labelOffsetY);
+                label.setHTML(segmentsLight[index].scale.x.toPrecision(3));
+                label.updatePosition();
+                prevSegmentLabels.push(label);
+                container.appendChild(prevSegmentLabels[1].element);
+                prevSegments.push(segmentsLight[index]);
+            }  
+            if (segmentsHeavy[index]){
                 segmentsHeavy[index].material.color.setHex( 0x000000 );
-            if (segmentsSuperHeavy[index])
+                label = createLabel(segmentsHeavy[index], data.labelOffsetX, data.labelOffsetY);
+                label.setHTML(segmentsHeavy[index].scale.x.toPrecision(3));
+                label.updatePosition();
+                prevSegmentLabels.push(label);
+                container.appendChild(prevSegmentLabels[2].element);
+                prevSegments.push(segmentsHeavy[index]);
+            }
+                
+            if (segmentsSuperHeavy[index]){
                 segmentsSuperHeavy[index].material.color.setHex( 0x000000 );
-
-            //scene.remove(segmentSlider);
-            /*segmentSlider = new THREE.Mesh( segmentGeo, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
-            segmentSlider.position.copy(intersects[ 0 ].point);
-            segmentSlider.position.z = 0.001;
-            segmentSlider.scale.x = 5;
-            segmentSlider.scale.y = 1;
-            scene.add(segmentSlider);*/
-
+                label = createLabel(segmentsSuperHeavy[index], data.labelOffsetX, data.labelOffsetY);
+                label.setHTML(segmentsSuperHeavy[index].scale.x.toPrecision(3));
+                label.updatePosition();
+                prevSegmentLabels.push(label);
+                container.appendChild(prevSegmentLabels[3].element);
+                prevSegments.push(segmentsSuperHeavy[index]);
+            }
         }
     }
 }
@@ -528,6 +583,7 @@ var initHorizon = function(opac){
     var SPMaterial;
     SPmaterial = new THREE.MeshBasicMaterial( { color: 0x000000 , opacity : opac, transparent:true});
     horizon = new THREE.Mesh( H, SPmaterial );
+    horizon.position.y = data.offsetY;
     scene.add(horizon);  
 }
 
@@ -536,9 +592,9 @@ var animateHorizon = function (opac){
         setTimeout(function(){
             scene.remove(horizon);
             initHorizon(opac);
-            opac += 0.01; 
+            opac += 0.1; 
             animateHorizon(opac);
-        }, 30);
+        }, 20);
 
     }
 
@@ -549,9 +605,12 @@ var initWireframeBH = function(){
     //create the geometry wireframe of the black hole
     BH = new THREE.ParametricGeometry( blackHole, data.slices, data.stacks );
     var edgesGeo = new THREE.EdgesGeometry(BH, 0.01);
+    lineMat.opacity = 0;
     wireframeBH = new THREE.LineSegments( edgesGeo, lineMat );
     wireframeBH.position.y = -data.meshOffset - Math.sqrt(25 * 8 * 2.5);
     scene.add( wireframeBH );
+    fadeIn(wireframeBH);
+    //
 
 }
 
@@ -588,7 +647,7 @@ var narrative = function(narrationPhase){
        initLabelsStarPhase();
        type(captionRadialPlane, "This is what you see.", 0);
        type(captionWireFrame, "This is the underlying structure of space.", 0);
-       var finalCameraPosition = new THREE.Vector3(5,2,60);
+       var finalCameraPosition = new THREE.Vector3(5,1,50);
        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
        totalNumberOfCamSteps = 100;
        camStepsIndex=0;
@@ -596,6 +655,8 @@ var narrative = function(narrationPhase){
    }
    else if (narrationPhase == "massInteraction"){
         //document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
+        if(gui)
+            gui.destroy();
         massInteraction(narrationPhase);
     }
     else if (narrationPhase == "compareDistances"){
@@ -603,16 +664,20 @@ var narrative = function(narrationPhase){
         fadeOut(SPmesh);
         gui.destroy();
         massInteraction(narrationPhase);
-        compareLengthInteraction();
+        //compareLengthInteraction();
 
     }
     else if (narrationPhase == "collapse"){
+        if(gui)
+            gui.destroy();
+        allPathsDefined = false; 
+        data.heavyStar = false;
+        data.lightStar = false; 
+        data.superHeavyStar = false; 
+        massInteraction("compareDistances");
         collapseSphere();
-        fadeOut(wireframe);
-        //fadeOut(curvedPathRight);
-        //fadeOut(curvedPathLeft);
         animateHorizon(0);
-        fadeOut(wireframe);
+        initFlatGeometry();
         initWireframeBH();
     }
     else if (narrationPhase == "fadeOut"){
@@ -633,9 +698,9 @@ var render = function (narrationPhase) {
     narrative(narrationPhase);
     requestAnimationFrame( render );
 
-    for(var i=0; i<textLabels.length; i++) {
+    /*for(var i=0; i<textLabels.length; i++) {
       textLabels[i].updatePosition();
-  }
+    }*/
 
     moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
     camera.lookAt( scene.position );
@@ -666,4 +731,5 @@ window.addEventListener( 'resize', function () {
 
 
 initLights();
+//render();
 
