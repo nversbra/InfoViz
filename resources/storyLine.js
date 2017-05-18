@@ -191,7 +191,7 @@ rect = svg.selectAll("rect")
 
       // instead of appending we could try to just add them with a fixed position given by the position of the circle + left + top specifications
       if(d.img != undefined){
-        tip.append("img").style("margin-right", "4px").attr("src", d.img).attr("width", "64px");
+        tip.append("img").style("margin-right", "4px").attr("src", d.img).attr("width", "200px");
       }
       tip.append("div").html(dateValue );
       tip.transition()

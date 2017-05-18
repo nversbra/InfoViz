@@ -298,15 +298,15 @@ var generatePath = function(symmetricPart, type, segmentsArray){
     for (i = 0; i < maxIndex  ; i++) { 
         var j = i; 
         if (symmetricPart)
-         j = maxIndex - i; 
+           j = maxIndex - i; 
 
-     var currentI = j/maxIndex;
-     var currentR = j;
+       var currentI = j/maxIndex;
+       var currentR = j;
 
-     var metricScaling; 
-     var segmentCurved;
+       var metricScaling; 
+       var segmentCurved;
 
-     if (type == "star"){
+       if (type == "star"){
         metricScaling = metricScalingStar(currentR);
         segmentCurved = drawSegment(starPath(currentI, symmetricPart), metricScaling);
     }
@@ -524,6 +524,17 @@ function updatePaths() {
 
 };
 
+var clearPaths = function(lightStarRemaining){
+    data.heavyStar = false; 
+    data.superHeavyStar = false;
+    if (lightStarRemaining)
+        data.lightStar = true; 
+    else 
+        data.lightStar = false; 
+    updatePaths();
+
+}
+
 var clearSegmentsAndLabels = function(){
     var container = document.getElementById( 'ScaleLabels' );
     for (i = 0; i < prevSegments.length ; i++ ){
@@ -559,13 +570,10 @@ function onDocumentMouseMove( event ) {
             var container = document.getElementById( 'ScaleLabels' );
 
             clearSegmentsAndLabels();
-
             prevSegments = [];
-            
-
-            intersects[ 0 ].object.material.color.setHex( 0x000000 ); //set the color of the flat path segment to black
+            //intersects[ 0 ].object.material.color.setHex( 0x000000 ); //set the color of the flat path segment to black
+            intersects[ 0 ].object.material.color.setRGB(255,0,0);
             prevSegments.push(intersects[ 0 ].object);
-            
 
             // add the label 
             labelFlatSegment = createLabel(intersects[ 0 ].object, data.labelOffsetX + 5, data.labelOffsetY);
@@ -579,18 +587,20 @@ function onDocumentMouseMove( event ) {
             var index = segmentsFlat.indexOf(intersects[ 0 ].object);
 
             if (segmentsLight[index] && data.lightStar){
-                segmentsLight[index].material.color.setHex( 0x000000 );
+                var metricScaling = segmentsLight[index].scale.x.toPrecision(3);
+                segmentsLight[index].material.color.setRGB(  1/(metricScaling),0, 1 - 1/(metricScaling));
                 label = createLabel(segmentsLight[index], data.labelOffsetX, data.labelOffsetY);
-                label.setHTML(segmentsLight[index].scale.x.toPrecision(3));
+                label.setHTML(metricScaling);
                 label.updatePosition();
                 prevSegmentLabels[1] = label;
                 container.appendChild(prevSegmentLabels[1].element);
                 prevSegments.push(segmentsLight[index]);
             }  
             if (segmentsHeavy[index] && data.heavyStar){
-                segmentsHeavy[index].material.color.setHex( 0x000000 );
+                var metricScaling = segmentsHeavy[index].scale.x.toPrecision(3);
+                segmentsHeavy[index].material.color.setRGB(  1/(metricScaling),0,1- 1/(metricScaling));
                 label = createLabel(segmentsHeavy[index], data.labelOffsetX, data.labelOffsetY);
-                label.setHTML(segmentsHeavy[index].scale.x.toPrecision(3));
+                label.setHTML(metricScaling);
                 label.updatePosition();
                 prevSegmentLabels[2] = label;
                 container.appendChild(prevSegmentLabels[2].element);
@@ -598,9 +608,10 @@ function onDocumentMouseMove( event ) {
             }
 
             if (segmentsSuperHeavy[index] && data.superHeavyStar){
-                segmentsSuperHeavy[index].material.color.setHex( 0x000000 );
+                var metricScaling = segmentsSuperHeavy[index].scale.x.toPrecision(3);
+                segmentsSuperHeavy[index].material.color.setRGB(  1/(metricScaling),0,1 - 1/(metricScaling) );
                 label = createLabel(segmentsSuperHeavy[index], data.labelOffsetX, data.labelOffsetY);
-                label.setHTML(segmentsSuperHeavy[index].scale.x.toPrecision(3));
+                label.setHTML(metricScaling);
                 label.updatePosition();
                 prevSegmentLabels[3] = label;
                 container.appendChild(prevSegmentLabels[3].element);
@@ -608,15 +619,18 @@ function onDocumentMouseMove( event ) {
             }
 
             if (segmentsBlackHole[index]){
-                segmentsBlackHole[index].material.color.setHex( 0x000000 );
                 label = createLabel(segmentsBlackHole[index], data.labelOffsetX, -data.labelOffsetY);
                 var metricScaling =  segmentsBlackHole[index].scale.x.toPrecision(3);
                 if (metricScaling > 10){
                     label = createLabel(segmentsBlackHole[index], data.labelOffsetX + 15 , -data.labelOffsetY - 160);
                     label.setHTML("inf");
+                    segmentsBlackHole[index].material.color.setRGB( 0, 0, 1);
                 }
-                else
+                else{
                     label.setHTML(metricScaling);
+                    segmentsBlackHole[index].material.color.setRGB( 1/(metricScaling) ,0,1 - 1/(metricScaling) );
+                }
+                    
                 label.updatePosition();
                 prevSegmentLabels[4] = label;
                 container.appendChild(prevSegmentLabels[4].element);
@@ -712,32 +726,38 @@ var createBHPath = function(){
 
 var narrative = function(narrationPhase){
 
-
     if (narrationPhase == "flatPath"){
-     initFlatGeometry();
-     playAudio('http://localhost:8080/resources/audios/EV/EV1_1.wav');
-     animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
-     var finalCameraPosition = new THREE.Vector3(0,4,50);
-     camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-     totalNumberOfCamSteps = 1500;
-     camStepsIndex=0;
 
 
+        //reset
+        if(gui)
+            gui.destroy();
+        clearPaths(false); 
+        clearSegmentsAndLabels();
+        removeLabelsStarPhase();
+        scene.remove(SPmesh);
 
- }   
- else if (narrationPhase == "addStar"){
-       // document.getElementById('narration').innerHTML = "Now we add a heavy object, such as a star. <br> The presence of the mass curves the 2D space.";
-       initSphere(true);
-       initWireframe("light");
-       playAudio('http://localhost:8080/resources/audios/EV/EV2_0.wav');
-       var finalCameraPosition = new THREE.Vector3(5,1,50);
+        //init
+       initFlatGeometry();
+       playAudio('http://localhost:8080/resources/audios/EV/EV1_1.wav');
+       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
+       var finalCameraPosition = new THREE.Vector3(0,4,50);
        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-       totalNumberOfCamSteps = 100;
+       totalNumberOfCamSteps = 1500;
        camStepsIndex=0;
 
-   }
-   else if (narrationPhase == "massInteraction"){
-        sound.stop(); 
+
+
+   }   
+   else if (narrationPhase == "addStar"){
+     sound.stop();
+     initSphere(true);
+     initWireframe("light");
+     playAudio('http://localhost:8080/resources/audios/EV/EV2_0.wav');
+
+ }
+ else if (narrationPhase == "massInteraction"){
+    sound.stop();
         //document.getElementById('narration').innerHTML = "You can change the mass of the star to see the effect on the curvature of the 2D space";
         if(gui)
             gui.destroy();
@@ -745,19 +765,21 @@ var narrative = function(narrationPhase){
         playAudio('http://localhost:8080/resources/audios/EV/EV3_0.wav');
     }
     else if (narrationPhase == "compareDistances"){
+        sound.stop();
         playAudio('http://localhost:8080/resources/audios/EV/EV4_0.wav');
         fadeOut(radialPlane);
         //fadeOut(SPmesh);
         gui.destroy();
         createCurvedPaths(segmentsLight);
         initLabelsStarPhase();
-        type(captionRadialPlane, "Coordinate distance.", 0);
+        type(captionRadialPlane, "Coordinate distance (flat map).", 0);
         type(captionWireFrame, "Proper distances.", 0);
         massInteraction(narrationPhase);
         //compareLengthInteraction();
 
     }
     else if (narrationPhase == "collapse"){
+        sound.stop();
         playAudio('http://localhost:8080/resources/audios/EV/EV5_0.wav');
         clearSegmentsAndLabels();
         removeLabelsStarPhase();
@@ -776,13 +798,14 @@ var narrative = function(narrationPhase){
         
     }
     else if (narrationPhase == "compareDistancesBH"){
+        sound.stop();
         playAudio('http://localhost:8080/resources/audios/EV/EV6_0.wav');
         fadeOut(radialPlane);
         fadeOut(SPmesh);
         fadeOut(wireframeBH);
         createBHPath();
         initLabelsStarPhase();
-        type(captionRadialPlane, "Coordinate distance.", 0);
+        type(captionRadialPlane, "Coordinate distance (flat map).", 0);
         type(captionWireFrame, "Proper distances.", 0);
         allPathsDefined = true; 
         massInteraction("compareDistances");
@@ -794,9 +817,7 @@ var narrative = function(narrationPhase){
        
 
    }
-   else if( narrationPhase == "compareLength"){
-    compareLengthInteraction();
-}
+
 
 }
 

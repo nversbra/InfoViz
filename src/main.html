@@ -47,6 +47,18 @@
 
 <body>
 
+     <div id="ThreeJS"></div>
+    <div id="ScaleLabels"></div>
+
+    <div> 
+        <!--<p id="narration"> </p>-->
+        <div id="storyline" style="position:absolute; width:800px;height: 50px; color: white; left:50%;
+        margin-left:-400px; bottom:20px; background: rgba(54, 54, 54, 0.5);"></div>
+        <!--<p onclick="forward()" id="next_round">&#8250;</p>-->
+    </div>
+
+
+
 
 
     
@@ -64,12 +76,12 @@
     <script>
 
     var storyLineData = [
-    {"value": 1, "name": "flatPath", color: "gray", background: "white" }, 
-    {"value": 3, "name": "addStar" },
-    {"value": 4, "name": "massInteraction"},
-    {"value": 5, "name": "compareDistances"},
-    {"value": 6, "name": "collapse"}, 
-    {"value": 7, "name": "compareDistancesBH"}, 
+    {"value": 1, "name": "flatPath", color: "gray", background: "white", img: "../images/screenshots_EV/flatpath.png" }, 
+    {"value": 3, "name": "addStar", img: "../images/screenshots_EV/addStar.png" },
+    {"value": 4, "name": "massInteraction", img: "../images/screenshots_EV/massInteraction.png"},
+    {"value": 5, "name": "compareDistances", img: "../images/screenshots_EV/compareDistances.png"},
+    {"value": 7, "name": "collapse", img: "../images/screenshots_EV/collapse.png"}, 
+    {"value": 8, "name": "compareDistancesBH", img: "../images/screenshots_EV/compareDistancesBH.png"}, 
     ];
 
     var narrationPhases = ["initEView", "2D", "flatPath", "addStar", "massInteraction", "collapse", "fadeOut", "compareLength"];
@@ -85,17 +97,7 @@
 
     
 
-    <div id="ThreeJS"></div>
-    <div id="ScaleLabels"></div>
-
-    <div> 
-        <!--<p id="narration"> </p>-->
-        <div id="storyline" style="position:absolute; width:800px;height: 50px; color: white; left:50%;
-        margin-left:-400px; bottom:20px; background: rgba(54, 54, 54, 0.5);"></div>
-        <!--<p onclick="forward()" id="next_round">&#8250;</p>-->
-    </div>
-
-
+   
 
 
     <script>
