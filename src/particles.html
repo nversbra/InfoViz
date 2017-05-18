@@ -306,7 +306,7 @@
                 // add it to the geometry
                 particles.vertices.push(particle);
             }
-
+            console.log(array.length)
             // var pMaterial = new THREE.PointsMaterial({
             //     color: 0xFFFFFF,
             //     size: 20,
@@ -632,8 +632,8 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                //audioLoader.load('http://localhost:8080/resources/audios/milkyway/first.ogg', function (buffer) {
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/1.wav', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/finalIntro.ogg', function (buffer) {
+                // audioLoader.load('http://localhost:8080/resources/audios/milkyway/1.wav', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1.2);
                     sound.play();
@@ -680,8 +680,8 @@
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
-                //audioLoader.load('http://localhost:8080/resources/audios/milkyway/2.wav', function (buffer) {
+                //  audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/2.wav', function (buffer) {
                     //audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1);
@@ -708,10 +708,13 @@
                 camera.lookAt(new THREE.Vector3(10, -20, 0));
                 if (camera.position.z > 100) {
                     camera.position.z = camera.position.z - 3;
+                    camera.lookAt(new THREE.Vector3(10, -20, 0));
+                    controls.update();
                     // camera.fov *= 10;
                     // camera.updateProjectionMatrix();
                 }
                 else {
+                    
                     CurrentStage++;
                     // listener = new THREE.AudioListener();
                     // sound = new THREE.Audio(listener);
@@ -733,7 +736,7 @@
                 }
             }
             else if (CurrentStage == 7) {
-                
+                controls.update();
                 listener = new THREE.AudioListener();
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
@@ -868,7 +871,7 @@
                 sound = new THREE.Audio(listener);
                 audioLoader = new THREE.AudioLoader();
                 // audioLoader.load('http://localhost:8080/resources/audios/milkyway/second.ogg', function (buffer) {
-                audioLoader.load('http://localhost:8080/resources/audios/milkyway/final.wav', function (buffer) {
+                audioLoader.load('http://localhost:8080/resources/audios/milkyway/final2.wav', function (buffer) {
                     // audioLoader.load('../resources/audios/Vocaroo_s1yHMFtKBipb.ogg', function (buffer) {
                     sound.setBuffer(buffer);
                     sound.setVolume(1.5);
