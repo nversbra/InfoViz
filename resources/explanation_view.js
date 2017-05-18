@@ -622,15 +622,15 @@ function onDocumentMouseMove( event ) {
                 label = createLabel(segmentsBlackHole[index], data.labelOffsetX, -data.labelOffsetY);
                 var metricScaling =  segmentsBlackHole[index].scale.x.toPrecision(3);
                 if (metricScaling > 10){
-                    label = createLabel(segmentsBlackHole[index], data.labelOffsetX + 15 , -data.labelOffsetY - 160);
-                    label.setHTML("inf");
+                    label = createLabel(segmentsBlackHole[index], data.labelOffsetX + 20 , -data.labelOffsetY - 140);
+                    label.setHTML("&#8734");
                     segmentsBlackHole[index].material.color.setRGB( 0, 0, 1);
                 }
                 else{
                     label.setHTML(metricScaling);
                     segmentsBlackHole[index].material.color.setRGB( 1/(metricScaling) ,0,1 - 1/(metricScaling) );
                 }
-                    
+
                 label.updatePosition();
                 prevSegmentLabels[4] = label;
                 container.appendChild(prevSegmentLabels[4].element);
@@ -738,18 +738,18 @@ var narrative = function(narrationPhase){
         scene.remove(SPmesh);
 
         //init
-       initFlatGeometry();
-       playAudio('http://localhost:8080/resources/audios/EV/EV1_1.wav');
-       animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
-       var finalCameraPosition = new THREE.Vector3(0,4,50);
-       camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
-       totalNumberOfCamSteps = 1500;
-       camStepsIndex=0;
+        initFlatGeometry();
+        playAudio('http://localhost:8080/resources/audios/EV/EV1_1.wav');
+        animateFlatPath(0, 2*data.maxRadiusFactor*data.radius, 2 * 5 * data.radius );
+        var finalCameraPosition = new THREE.Vector3(0,4,50);
+        camMoveDirection = new THREE.Vector3(finalCameraPosition.x - camera.position.x, finalCameraPosition.y - camera.position.y, finalCameraPosition.z - camera.position.z);
+        totalNumberOfCamSteps = 1500;
+        camStepsIndex=0;
 
 
 
-   }   
-   else if (narrationPhase == "addStar"){
+    }   
+    else if (narrationPhase == "addStar"){
      sound.stop();
      initSphere(true);
      initWireframe("light");
@@ -770,9 +770,10 @@ var narrative = function(narrationPhase){
         fadeOut(radialPlane);
         //fadeOut(SPmesh);
         gui.destroy();
+        data.lightStar = true;
         createCurvedPaths(segmentsLight);
         initLabelsStarPhase();
-        type(captionRadialPlane, "Coordinate distance (flat map).", 0);
+        type(captionRadialPlane, "Coordinate distance (map).", 0);
         type(captionWireFrame, "Proper distances.", 0);
         massInteraction(narrationPhase);
         //compareLengthInteraction();
@@ -805,30 +806,36 @@ var narrative = function(narrationPhase){
         fadeOut(wireframeBH);
         createBHPath();
         initLabelsStarPhase();
-        type(captionRadialPlane, "Coordinate distance (flat map).", 0);
+        type(captionRadialPlane, "Coordinate distance (map).", 0);
         type(captionWireFrame, "Proper distances.", 0);
         allPathsDefined = true; 
         massInteraction("compareDistances");
-        data.lightStar = false; 
+        //data.lightStar = false; 
         //fadeOut(horizon);
         
        //massInteraction("compareDistances");
 
-       
-
    }
 
+   else if (narrationPhase == "restart"){
+            //back to beginning
+            window.location = "index.html";
 
-}
+        }
 
-var render = function (narrationPhase) {
+        
 
-    narrative(narrationPhase);
-    requestAnimationFrame( render );
 
-    for(var i=0; i<textLabels.length; i++) {
-      textLabels[i].updatePosition();
-  }
+    }
+
+    var render = function (narrationPhase) {
+
+        narrative(narrationPhase);
+        requestAnimationFrame( render );
+
+        for(var i=0; i<textLabels.length; i++) {
+          textLabels[i].updatePosition();
+      }
 
     moveCamera(); // moves the camera to a different position along a straight line whenever the parameters "camMoveDirection" etc. are set correcly. 
     camera.lookAt( scene.position );
