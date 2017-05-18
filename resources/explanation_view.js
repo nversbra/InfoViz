@@ -393,11 +393,11 @@ var removeCurvedPaths = function(segmentsArray){
 
 
 var initLabelsStarPhase = function(){
-    captionRadialPlane = createLabel(radialPlane, 510, -5);
+    captionRadialPlane = createLabel(radialPlane, 500, -5);
     this.ThreeJS.appendChild(captionRadialPlane.element);
     textLabels.push(captionRadialPlane);
 
-    captionWireFrame = createLabel(wireframeLight, 510, -5);
+    captionWireFrame = createLabel(wireframeLight, 500, -5);
     this.ThreeJS.appendChild(captionWireFrame.element);
     textLabels.push(captionWireFrame);
 }
@@ -754,6 +754,7 @@ var narrative = function(narrationPhase){
      initSphere(true);
      initWireframe("light");
      playAudio('http://localhost:8080/resources/audios/EV/EV2_0.wav');
+     data.lightStar = true;
 
  }
  else if (narrationPhase == "massInteraction"){
@@ -770,8 +771,10 @@ var narrative = function(narrationPhase){
         fadeOut(radialPlane);
         //fadeOut(SPmesh);
         gui.destroy();
-        data.lightStar = true;
-        createCurvedPaths(segmentsLight);
+        /*data.lightStar = true;
+        createCurvedPaths(segmentsLight);*/
+        //data.lightStar = true;
+        updatePaths();
         initLabelsStarPhase();
         type(captionRadialPlane, "Coordinate distance (map).", 0);
         type(captionWireFrame, "Proper distances.", 0);
@@ -823,7 +826,7 @@ var narrative = function(narrationPhase){
 
         }
 
-        
+
 
 
     }
